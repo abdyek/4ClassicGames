@@ -1,0 +1,17 @@
+body {
+    background-color:#8b6499;
+}
+
+#game-area {
+    width:800px;
+    height: 600px;
+    margin-left:auto;
+    margin-right:auto;
+}
+
+#game-area-canvas {
+    background-color:#526799;
+    display:table;
+    margin:0 auto;
+}
+
