@@ -16,11 +16,15 @@ class Shape {
         this.firstColInd = colInd
         this.rotationInd = 0
         this.listOfShape = []
+        this.minCellCol
+        this.maxCellCol
+        this.maxCellRow     // for the underside of moveable area
+        this.setLimits()
     }
-    move(x, y) {
+    /*move(x, y) {
         this.rowInd += y
         this.colInd += x
-    }
+    }*/
     create() {
         for(var i = 0; i<this.allPatterns[0].length; i++) {
             fillCell(this.rowInd + this.allPatterns[this.rotationInd][i][0], this.colInd + this.allPatterns[this.rotationInd][i][1])
@@ -31,12 +35,54 @@ class Shape {
         if(this.rotationInd == this.allPatterns.length) {
             this.rotationInd = 0;
         }
+        this.setLimits()
         refresh()
     }
     move(rowStep, colStep) {
-        this.rowInd += rowStep
-        this.colInd += colStep
-        refresh()
+        let possible = true
+        let r, c    // absolute row and Col in the area
+        for(var i = 0; i<this.allPatterns[this.rotationInd].length; i++) {
+            r = this.rowInd + this.allPatterns[this.rotationInd][i][0]
+            c = this.colInd + this.allPatterns[this.rotationInd][i][1]
+            if(stack[r + rowStep][c + colStep])
+                possible = false
+        }
+        if(possible) {
+            this.rowInd += rowStep
+            this.colInd += colStep
+            if(this.colInd < - this.minCellCol)         // control to not exit left border
+                this.colInd = - this.minCellCol
+            if(this.colInd + this.maxCellCol > 9) {     // control to not exit right border
+                this.colInd = 9 - this.maxCellCol
+            }
+            if(this.rowInd > 9 - this.maxCellRow) {     // control to not exit bottom border
+                this.rowInd = 9 - this.maxCellRow
+            }
+            refresh()
+        }
+    }
+    setLimits() {
+        let colMin = this.allPatterns[this.rotationInd][0][1]
+        let colMax = colMin
+        for(var i = 1; i<this.allPatterns[0].length; i++) {
+            if(colMin>this.allPatterns[this.rotationInd][i][1]) {
+                colMin = this.allPatterns[this.rotationInd][i][1]
+            }
+            if(colMax<this.allPatterns[this.rotationInd][i][1]) {
+                colMax = this.allPatterns[this.rotationInd][i][1]
+            }
+        }
+        this.minCellCol = colMin
+        this.maxCellCol = colMax
+
+        let rowMax = this.allPatterns[this.rotationInd][0][0]
+        for(var i = 1; i<this.allPatterns[0].length; i++) {
+            if(rowMax<this.allPatterns[this.rotationInd][i][0]) {
+                rowMax = this.allPatterns[this.rotationInd][i][0]
+            }
+        }
+        this.maxCellRow = rowMax
+        //console.log(col)  test amaçlı
     }
 }
 
@@ -142,15 +188,21 @@ let likeLReverse = new LikeLReverse()
 let square2x2 = new Square2x2()
 let square1x1 = new Square1x1()
 
-let = listOfShape = [stick, likeZ, likeZReverse, likeT, likeL, likeLReverse, square2x2, square1x1]
+let listOfShape = [stick, likeZ, likeZReverse, likeT, likeL, likeLReverse, square2x2, square1x1]
 
-let map = [10]
+let stack = [10]
 for (var i = 0; i<10; i++) {
-    map[i] = new Array(10)
+    stack[i] = new Array(10)
     for(var j = 0; j<10; j++) {
-        map[i][j] = true   // is available to fill?
+        stack[i][j] = false   // is filled?
     }
 }
+
+function fillStack(rowInd, colInd) {
+    stack[rowInd][colInd] = true
+    refresh()
+}
+
 
 let currentShape
 function getShape() {
@@ -172,9 +224,17 @@ function refresh() {
     drawRectangle(10, 10, 2, 580, "grey")
 
     //  grid
-    for (i = 1; i < 10; i++) {
+    for (var i = 1; i < 10; i++) {
         drawRectangle(10, 10 + i*58, 580, 1, "grey")
         drawRectangle(10 + i*58, 10, 1, 580, "grey")
+    }
+
+    for (var r = 0; r<10; r++) {
+        for (var c = 0; c<10; c++) {
+            if(stack[r][c]) {
+                fillCell(r,c)
+            }
+        }
     }
 
     if(gameStart)
