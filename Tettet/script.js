@@ -24,12 +24,11 @@ class Shape {
     }
     rotate() {
         if(this.rotatable()) {
-            this.rotationInd++;
-            if(this.rotationInd == this.allPatterns.length) {
-                this.rotationInd = 0;
-            }
-            refresh()
+            this.rotationInd++
+            if(this.rotationInd == this.allPatterns.length)
+                this.rotationInd = 0
         }
+        refresh()
     }
     rotatable() {
         let possible = true
@@ -59,43 +58,17 @@ class Shape {
         if(possible) {
             this.rowInd += rowStep
             this.colInd += colStep
-            /*
-            if(this.colInd < - this.minCellCol)         // control to not exit left border
-                this.colInd = - this.minCellCol
-            if(this.colInd + this.maxCellCol > 9) {     // control to not exit right border
-                this.colInd = 9 - this.maxCellCol
-            }
-            if(this.rowInd > 9 - this.maxCellRow) {     // control to not exit bottom border
-                this.rowInd = 9 - this.maxCellRow
-            }
-            */
             refresh()
+            return true   // successful!!  I need It at flow function
         }
     }
-    /*setLimits() {
-        let colMin = this.allPatterns[this.rotationInd][0][1]
-        let colMax = colMin
-        for(var i = 1; i<this.allPatterns[0].length; i++) {
-            if(colMin>this.allPatterns[this.rotationInd][i][1]) {
-                colMin = this.allPatterns[this.rotationInd][i][1]
-            }
-            if(colMax<this.allPatterns[this.rotationInd][i][1]) {
-                colMax = this.allPatterns[this.rotationInd][i][1]
-            }
+    joinStack() {
+        for(var i = 0; i < this.allPatterns[this.rotationInd].length; i++) {
+            stack
+            [this.rowInd + this.allPatterns[this.rotationInd][i][0] + 1]
+            [this.colInd + this.allPatterns[this.rotationInd][i][1] + 1] = true
         }
-        this.minCellCol = colMin
-        this.maxCellCol = colMax
-
-        let rowMax = this.allPatterns[this.rotationInd][0][0]
-        for(var i = 1; i<this.allPatterns[0].length; i++) {
-            if(rowMax<this.allPatterns[this.rotationInd][i][0]) {
-                rowMax = this.allPatterns[this.rotationInd][i][0]
-            }
-        }
-        this.maxCellRow = rowMax
-        //console.log(col)  test amaçlı
     }
-    */
 }
 
 
@@ -221,6 +194,37 @@ function fillStack(rowInd, colInd) {
     refresh()
 }
 
+function clearRow(rowInd) {
+    for(var i = 1; i<11; i++) {
+        stack[rowInd+1][i] = false
+    }
+    for(var r = rowInd; r > 0; r--) {
+        for (var c = 1; c < 11; c++) {
+            if(stack[r][c]) {
+                stack[r][c] = false
+                stack[r+1][c] = true
+            }
+        }
+    }
+}
+
+// let notDelete = []
+function controlStack() {
+    let notDelete = []
+    for(var r = 1 ; r<11; r++) {
+        for(var c = 1; c<11; c++) {
+            if(!stack[r][c]) {
+                notDelete.push(r-1)
+                break
+            }
+        }
+    }
+    for (var i = 0 ; i < 10; i++) {
+        if(notDelete.indexOf(i)==-1)
+            clearRow(i)
+    }
+}
+
 
 let currentShape
 function getShape() {
@@ -231,8 +235,22 @@ function getShape() {
     refresh()
 }
 
+// block flow
+setInterval(()=>{
+    if(gameStart) {
+        if(!currentShape.move(1, 0)) {
+            currentShape.joinStack()
+            controlStack()
+            getShape()
+        }
+    }
+}, 1000)
+
+
+
+
 function refresh() {
-    context.clearRect(0,0,canvas.width, canvas.height);
+    context.clearRect(0,0,canvas.width, canvas.height)
 
     // drawing game environment
     // border
@@ -258,6 +276,7 @@ function refresh() {
     if(gameStart)
         currentShape.create()
 }
+
 
 // drawing tools
 function drawRectangle(x, y, width, height, color) {
