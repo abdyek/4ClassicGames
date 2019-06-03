@@ -16,27 +16,34 @@ class Shape {
         this.firstColInd = colInd
         this.rotationInd = 0
         this.listOfShape = []
-        this.minCellCol
-        this.maxCellCol
-        this.maxCellRow     // for the underside of moveable area
-        this.setLimits()
     }
-    /*move(x, y) {
-        this.rowInd += y
-        this.colInd += x
-    }*/
     create() {
         for(var i = 0; i<this.allPatterns[0].length; i++) {
             fillCell(this.rowInd + this.allPatterns[this.rotationInd][i][0], this.colInd + this.allPatterns[this.rotationInd][i][1])
         }
     }
     rotate() {
-        this.rotationInd++;
-        if(this.rotationInd == this.allPatterns.length) {
-            this.rotationInd = 0;
+        if(this.rotatable()) {
+            this.rotationInd++;
+            if(this.rotationInd == this.allPatterns.length) {
+                this.rotationInd = 0;
+            }
+            refresh()
         }
-        this.setLimits()
-        refresh()
+    }
+    rotatable() {
+        let possible = true
+        let nextRotationInd = this.rotationInd + 1
+        if(nextRotationInd == this.allPatterns.length)
+            nextRotationInd = 0
+        for(var i = 0; i <this.allPatterns[nextRotationInd].length;i++) {
+            if( stack
+                [this.rowInd + this.allPatterns[nextRotationInd][i][0] + 1]
+                [this.colInd + this.allPatterns[nextRotationInd][i][1] + 1])
+                possible = false
+        }
+
+        return possible
     }
     move(rowStep, colStep) {
         let possible = true
@@ -44,12 +51,15 @@ class Shape {
         for(var i = 0; i<this.allPatterns[this.rotationInd].length; i++) {
             r = this.rowInd + this.allPatterns[this.rotationInd][i][0]
             c = this.colInd + this.allPatterns[this.rotationInd][i][1]
-            if(stack[r + rowStep][c + colStep])
+            if(stack[r + rowStep+1][c + colStep+1]){    // +1 to slide stack matrix
                 possible = false
+                break
+            }
         }
         if(possible) {
             this.rowInd += rowStep
             this.colInd += colStep
+            /*
             if(this.colInd < - this.minCellCol)         // control to not exit left border
                 this.colInd = - this.minCellCol
             if(this.colInd + this.maxCellCol > 9) {     // control to not exit right border
@@ -58,10 +68,11 @@ class Shape {
             if(this.rowInd > 9 - this.maxCellRow) {     // control to not exit bottom border
                 this.rowInd = 9 - this.maxCellRow
             }
+            */
             refresh()
         }
     }
-    setLimits() {
+    /*setLimits() {
         let colMin = this.allPatterns[this.rotationInd][0][1]
         let colMax = colMin
         for(var i = 1; i<this.allPatterns[0].length; i++) {
@@ -84,6 +95,7 @@ class Shape {
         this.maxCellRow = rowMax
         //console.log(col)  test amaçlı
     }
+    */
 }
 
 
@@ -190,16 +202,22 @@ let square1x1 = new Square1x1()
 
 let listOfShape = [stick, likeZ, likeZReverse, likeT, likeL, likeLReverse, square2x2, square1x1]
 
-let stack = [10]
-for (var i = 0; i<10; i++) {
-    stack[i] = new Array(10)
-    for(var j = 0; j<10; j++) {
+let stack = [12]                    // 12 because I reserved 2 x 2 hidden stick for borders
+for (var i = 0; i<12; i++) {
+    stack[i] = new Array(12)
+    for(var j = 0; j<12; j++) {
         stack[i][j] = false   // is filled?
     }
 }
 
+// borders must be true
+for (var i = 0; i<12; i++) {
+    stack[0][i] = stack[11][i] = stack[i][0] = stack[i][11] = true
+    // top ,       bottom  ,        left ,          right     bottoms
+}
+
 function fillStack(rowInd, colInd) {
-    stack[rowInd][colInd] = true
+    stack[rowInd+1][colInd+1] = true      // +1 to slide stack matrix
     refresh()
 }
 
@@ -229,10 +247,10 @@ function refresh() {
         drawRectangle(10 + i*58, 10, 1, 580, "grey")
     }
 
-    for (var r = 0; r<10; r++) {
-        for (var c = 0; c<10; c++) {
+    for (var r = 1; r<11; r++) {
+        for (var c = 1; c<11; c++) {
             if(stack[r][c]) {
-                fillCell(r,c)
+                fillCell(r-1,c-1)
             }
         }
     }
@@ -267,7 +285,6 @@ function keypress(e) {
     if(e.key=='d')
         currentShape.move(0, 1)
 }
-
 
 refresh()
 
