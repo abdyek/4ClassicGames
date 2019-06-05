@@ -3,7 +3,7 @@
 canvas = document.getElementById("game-area-canvas")
 context = canvas.getContext("2d")
 
-canvas.width = 800
+canvas.width = 600
 canvas.height = 600
 
 // shapes
@@ -189,11 +189,6 @@ for (var i = 0; i<12; i++) {
     // top ,       bottom  ,        left ,          right     bottoms
 }
 
-function fillStack(rowInd, colInd) {
-    stack[rowInd+1][colInd+1] = true      // +1 to slide stack matrix
-    refresh()
-}
-
 function clearRow(rowInd) {
     for(var i = 1; i<11; i++) {
         stack[rowInd+1][i] = false
@@ -211,6 +206,7 @@ function clearRow(rowInd) {
 // let notDelete = []
 function controlStack() {
     let notDelete = []
+    let bonus = 0
     for(var r = 1 ; r<11; r++) {
         for(var c = 1; c<11; c++) {
             if(!stack[r][c]) {
@@ -220,9 +216,13 @@ function controlStack() {
         }
     }
     for (var i = 0 ; i < 10; i++) {
-        if(notDelete.indexOf(i)==-1)
+        if(notDelete.indexOf(i)==-1) {
             clearRow(i)
+            bonus++
+        }
     }
+    score += (bonus) ? Math.pow(bonus, bonus) : 0
+    updateScore()
 }
 
 
@@ -232,7 +232,16 @@ function getShape() {
     currentShape = listOfShape[randomNumber]
     currentShape.rowInd = currentShape.firstRowInd
     currentShape.colInd = currentShape.firstColInd
+    currentShape.rotationInd = 0    // rotationInd must be 0
     refresh()
+}
+
+// score
+let score = 0
+
+function updateScore() {
+    var sc = document.getElementById("score")
+    sc.innerText = score
 }
 
 // block flow
@@ -245,8 +254,6 @@ setInterval(()=>{
         }
     }
 }, 1000)
-
-
 
 
 function refresh() {
