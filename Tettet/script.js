@@ -3,7 +3,7 @@
 canvas = document.getElementById("game-area-canvas")
 context = canvas.getContext("2d")
 
-canvas.width = 600
+canvas.width = 800
 canvas.height = 600
 
 // shapes
@@ -162,7 +162,7 @@ class Square1x1 extends Shape {
 }
 
 // tools for game play
-let gameStart = false
+let gameContinues = false
 
 let stick = new Stick()
 let likeZ = new LikeZ()
@@ -176,6 +176,7 @@ let square1x1 = new Square1x1()
 let listOfShape = [stick, likeZ, likeZReverse, likeT, likeL, likeLReverse, square2x2, square1x1]
 
 let stack = [12]                    // 12 because I reserved 2 x 2 hidden stick for borders
+
 for (var i = 0; i<12; i++) {
     stack[i] = new Array(12)
     for(var j = 0; j<12; j++) {
@@ -200,6 +201,12 @@ function clearRow(rowInd) {
                 stack[r+1][c] = true
             }
         }
+    }
+}
+
+function clearAllRows() {
+    for(var i=0; i<10; i++) {
+        clearRow(i)
     }
 }
 
@@ -228,12 +235,24 @@ function controlStack() {
 
 let currentShape
 function getShape() {
-    var randomNumber = Math.floor((Math.random() * listOfShape.length+ 0))
-    currentShape = listOfShape[randomNumber]
+    addShape()
+    currentShape = nextQueue.shift()
     currentShape.rowInd = currentShape.firstRowInd
     currentShape.colInd = currentShape.firstColInd
     currentShape.rotationInd = 0    // rotationInd must be 0
     refresh()
+}
+
+let nextQueue = []
+
+function addShape() {
+    var randomNumber = Math.floor((Math.random() * listOfShape.length+ 0))
+    nextQueue.push(listOfShape[randomNumber])
+}
+
+
+for (var i = 0; i<4; i++) {
+    addShape()              // for starting
 }
 
 // score
@@ -246,7 +265,7 @@ function updateScore() {
 
 // block flow
 setInterval(()=>{
-    if(gameStart) {
+    if(gameContinues) {
         if(!currentShape.move(1, 0)) {
             currentShape.joinStack()
             controlStack()
@@ -255,33 +274,59 @@ setInterval(()=>{
     }
 }, 1000)
 
+function gameStart() {
+    clearAllRows()
+    score = 0
+    updateScore()
+    gameContinues = true
+    getShape()
+}
+
+function gameStop() {
+    gameContinues = false
+}
+
 
 function refresh() {
-    context.clearRect(0,0,canvas.width, canvas.height)
 
-    // drawing game environment
-    // border
-    drawRectangle(10, 10, 580, 2, "grey")
-    drawRectangle(590, 10, 2, 580, "grey")
-    drawRectangle(10, 590, 580, 2, "grey")
-    drawRectangle(10, 10, 2, 580, "grey")
+    if(gameContinues) {
+        context.clearRect(0,0,canvas.width, canvas.height)
 
-    //  grid
-    for (var i = 1; i < 10; i++) {
-        drawRectangle(10, 10 + i*58, 580, 1, "grey")
-        drawRectangle(10 + i*58, 10, 1, 580, "grey")
-    }
+        // drawing game environment
+        // border
+        drawRectangle(10, 10, 580, 2, "grey")
+        drawRectangle(590, 10, 2, 580, "grey")
+        drawRectangle(10, 590, 580, 2, "grey")
+        drawRectangle(10, 10, 2, 580, "grey")
 
-    for (var r = 1; r<11; r++) {
-        for (var c = 1; c<11; c++) {
-            if(stack[r][c]) {
-                fillCell(r-1,c-1)
+        //  grid
+        for (var i = 1; i < 10; i++) {
+            drawRectangle(10, 10 + i*58, 580, 1, "grey")
+            drawRectangle(10 + i*58, 10, 1, 580, "grey")
+        }
+
+        // cell
+        for (var r = 1; r<11; r++) {
+            for (var c = 1; c<11; c++) {
+                if(stack[r][c]) {
+                    fillCell(r-1,c-1)
+                }
             }
         }
-    }
 
-    if(gameStart)
+        // next
+        var cursorR = 0
+        var blocks
+        for (var i = 0; i<nextQueue.length; i++) {
+            cells = nextQueue[i].allPatterns[0]
+            for( var j = 0 ; j <cells.length; j++) {
+                fillNext( cursorR + cells[j][0], cells[j][1])
+            }
+            cursorR += 4
+        }
+
         currentShape.create()
+    }
 }
 
 
@@ -297,6 +342,10 @@ function drawRectangle(x, y, width, height, color) {
 
 function fillCell(rowInd, colInd) {
     drawRectangle(11 + colInd*58, 11 + rowInd*58, 58, 58, "#83af9b")
+}
+
+function fillNext(rowInd, colInd) {
+    drawRectangle(660 + colInd*25, 70 + rowInd*25, 25, 25, "#83af9b")
 }
 
 //keypress event
