@@ -1,5 +1,10 @@
 body {
-    background-color:#8b6499;
+    background-color:#31393c;
+    color:#d8d78f;
+    font-family: 'ZCOOL KuaiLe', cursive;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
 }
 
 #game-area {
@@ -7,10 +12,11 @@ body {
     height: 600px;
     margin-left:auto;
     margin-right:auto;
+    display:none;
 }
 
 #game-area-canvas {
-    background-color:#526799;
+    background-color:#66767c;
     display:table;
     float:left;
     margin:0 auto;
@@ -27,7 +33,7 @@ body {
 
 #next {
     height: 50px;
-    background-color: #8f8aa7;
+    background-color: #57656a;
     color: #eee;
     font-size:24px;
     text-align:center;
@@ -37,7 +43,7 @@ body {
 
 #score-text {
     height: 50px;
-    background-color: #8f8aa7;
+    background-color: #57656a;
     color: #eee;
     font-size:24px;
     text-align:center;
@@ -53,3 +59,45 @@ body {
     text-align:center;
     line-height: 50px;
 }
+
+#game-menu {
+    width: 500px;
+    height: 300px;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    margin-top: -150px; 
+    margin-left: -250px;
+}
+
+#game-title {
+    font-size: 100px;
+    text-align:center;
+}
+
+.textAlignRight {
+    text-align: right;
+}
+
+.textAlignCenter {
+    text-align: center;
+}
+
+.textAlignLeft {
+    text-align: left
+}
+
+#game-over {
+    display:none;
+    color: #ff0505;
+    font-size: 20px;
+}
+
+#your-score {
+    display:none;
+}
+
+#score-table {
+    display:none;
+}
+

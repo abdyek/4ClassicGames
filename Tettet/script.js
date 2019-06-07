@@ -6,6 +6,12 @@ context = canvas.getContext("2d")
 canvas.width = 800
 canvas.height = 600
 
+let menu = document.getElementById("game-menu")
+let area = document.getElementById("game-area")
+let gameOver = document.getElementById("game-over")
+let scoreTable = document.getElementById("score-table")
+let yourScore = document.getElementById("your-score")
+
 // shapes
 class Shape {
     constructor(allPatterns, rowInd, colInd) {
@@ -58,6 +64,7 @@ class Shape {
         if(possible) {
             this.rowInd += rowStep
             this.colInd += colStep
+            active = true
             refresh()
             return true   // successful!!  I need It at flow function
         }
@@ -237,11 +244,15 @@ let currentShape
 function getShape() {
     addShape()
     currentShape = nextQueue.shift()
+
     currentShape.rowInd = currentShape.firstRowInd
     currentShape.colInd = currentShape.firstColInd
     currentShape.rotationInd = 0    // rotationInd must be 0
+    active = false
     refresh()
 }
+
+let active = false   // to detect
 
 let nextQueue = []
 
@@ -267,6 +278,9 @@ function updateScore() {
 setInterval(()=>{
     if(gameContinues) {
         if(!currentShape.move(1, 0)) {
+            if(!active) {
+                gameStop()
+            }
             currentShape.joinStack()
             controlStack()
             getShape()
@@ -275,6 +289,8 @@ setInterval(()=>{
 }, 1000)
 
 function gameStart() {
+    area.style.display = "block"
+    menu.style.display = "none"
     clearAllRows()
     score = 0
     updateScore()
@@ -284,6 +300,12 @@ function gameStart() {
 
 function gameStop() {
     gameContinues = false
+    menu.style.display = "block"
+    area.style.display = "none"
+    gameOver.style.display = "block"
+    yourScore.style.display = "block"
+    scoreTable.style.display = "block"
+    scoreTable.innerText = score;
 }
 
 
@@ -293,11 +315,6 @@ function refresh() {
         context.clearRect(0,0,canvas.width, canvas.height)
 
         // drawing game environment
-        // border
-        drawRectangle(10, 10, 580, 2, "grey")
-        drawRectangle(590, 10, 2, 580, "grey")
-        drawRectangle(10, 590, 580, 2, "grey")
-        drawRectangle(10, 10, 2, 580, "grey")
 
         //  grid
         for (var i = 1; i < 10; i++) {
@@ -313,6 +330,12 @@ function refresh() {
                 }
             }
         }
+
+        // border
+        drawRectangle(10, 10, 580, 2, "grey")
+        drawRectangle(590, 10, 2, 580, "grey")
+        drawRectangle(10, 590, 580, 2, "grey")
+        drawRectangle(10, 10, 2, 580, "grey")
 
         // next
         var cursorR = 0
@@ -341,7 +364,7 @@ function drawRectangle(x, y, width, height, color) {
 }
 
 function fillCell(rowInd, colInd) {
-    drawRectangle(11 + colInd*58, 11 + rowInd*58, 58, 58, "#83af9b")
+    drawRectangle(11 + colInd*58, 11 + rowInd*58, 58, 58, "#8aa79e")
 }
 
 function fillNext(rowInd, colInd) {
@@ -351,14 +374,21 @@ function fillNext(rowInd, colInd) {
 //keypress event
 document.body.addEventListener('keypress', keypress)
 function keypress(e) {
-    if(e.key=='w')
+    if(!gameContinues) {
+        gameStart()
+    }
+    if(e.key=='w' || e.key=="W")
         currentShape.rotate()
-    if(e.key=='a')
+    if(e.key=='a' || e.key=="A")
         currentShape.move(0,-1)
-    if(e.key=='s')
+    if(e.key=='s' || e.key=="S")
         currentShape.move(1, 0)
-    if(e.key=='d')
+    if(e.key=='d' || e.key=="D")
         currentShape.move(0, 1)
+    if(e.key=='r' || e.key=="R") {
+        gameStop()
+        gameStart()
+    }
 }
 
 refresh()
