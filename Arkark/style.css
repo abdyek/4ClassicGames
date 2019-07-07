@@ -1,0 +1,14 @@
+body {
+    background-color:#31393c;
+    color:#d8d78f;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+}
+
+#canvas {
+    background-color:#66767c;
+    display:block;
+    margin:0 auto;
+}
+
