@@ -6,7 +6,10 @@ function gameLoop() {
     context.clearRect(0,0,canvas.width, canvas.height)
 
     // draw
-    drawCircle(10,10, 5, "red")
+    drawStick(40, 40, 60, 100, 3, "purple")    // exam
+
+    drawCircle(10,10, 5, "red")                 // exam
+
 
     for(var i = 0; i<ballList.length; i++) {
         ballList[i].draw()

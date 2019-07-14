@@ -4,3 +4,12 @@ var drawCircle = function (x,y, radius, color) {
     context.fillStyle = color
     context.fill()
 }
+
+var drawStick = function (x1, y1, x2, y2, width, color) {
+    context.beginPath()
+    context.moveTo(x1, y1)
+    context.lineTo(x2, y2)
+    context.lineWidth = width
+    context.strokeStyle = color
+    context.stroke();
+}
