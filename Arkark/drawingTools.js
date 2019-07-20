@@ -13,3 +13,12 @@ var drawStick = function (x1, y1, x2, y2, width, color) {
     context.strokeStyle = color
     context.stroke();
 }
+
+var drawRectangle = function (x, y, width, height, color) {
+    context.beginPath();
+    context.moveTo(x, y+(height/2));
+    context.lineTo(x+width, y+(height/2));
+    context.lineWidth = height;
+    context.strokeStyle = color;
+    context.stroke();
+}
