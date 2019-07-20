@@ -50,53 +50,43 @@ class Ball {
 
         // horizontal block control
         if(this.route.x > 0) {  // go right
+            var min = (limitList.right[this.blockIndex.y1] <
+                    limitList.right[this.blockIndex.y2]) ? 
+                    this.blockIndex.y1 : this.blockIndex.y2
+            if(this.coordinate.x + 10 > limitList.right[min] &&
+                this.coordinate.x < limitList.right[min]) {
+                this.setAngle(180 - this.angle)
+            }
+
             // control
         } else if (this.route.x < 0) {  // go left
-            // control
+            var max = (limitList.left[this.blockIndex.y1] >
+                    limitList.left[this.blockIndex.y2]) ? 
+                    this.blockIndex.y1 : this.blockIndex.y2
+            if(this.coordinate.x < limitList.left[max] &&
+                this.coordinate.x + 10 > limitList.left[max]) {
+                this.setAngle(180 - this.angle)
+            }
         }
 
         // vertical block control
         if(this.route.y < 0) {  // go up
-            if(this.blockIndex.x1 == this.blockIndex.x2) {
-                // the ball is not over, a line
-                if(this.coordinate.y < limitList.up[this.blockIndex.x1] &&
-                   this.coordinate.y + 10 > limitList.up[this.blockIndex.x1]) {
-                    this.setAngle(360 - this.angle)
-                }
-            } else {
-                var max = (limitList.up[this.blockIndex.x1] >
-                                limitList.up[this.blockIndex.x2]) ? 
-                                this.blockIndex.x1 : this.blockIndex.x2
-                if(this.coordinate.y < limitList.up[max] &&
-                   this.coordinate.y + 10 > limitList.up[max]) {
-                    this.setAngle(360 - this.angle)
-                }
-                
+            var max = (limitList.up[this.blockIndex.x1] >
+                    limitList.up[this.blockIndex.x2]) ? 
+                    this.blockIndex.x1 : this.blockIndex.x2
+            if(this.coordinate.y < limitList.up[max] &&
+                this.coordinate.y + 10 > limitList.up[max]) {
+                this.setAngle(360 - this.angle)
             }
         } else if (this.route.y > 0) {  // go down
-            if(this.blockIndex.x1 == this.blockIndex.x2) {
-                // the ball is not over, a line
-                if(this.coordinate.y + 10 > limitList.down[this.blockIndex.x1] &&
-                   this.coordinate.y < limitList.down[this.blockIndex.x1]) {
-                    this.setAngle(360 - this.angle)
-                }
-            } else {
-
+            var min = (limitList.up[this.blockIndex.x1] <
+                    limitList.up[this.blockIndex.x2]) ? 
+                    this.blockIndex.x1 : this.blockIndex.x2
+            if(this.coordinate.y + 10 > limitList.down[min] &&
+                this.coordinate.y < limitList.down[min]) {
+                this.setAngle(360 - this.angle)
             }
         }
-
-
-
-        /*
-        for( var i = 0 ; i < stickList.length; i++) {
-            for(var j = 0 ; stickList[i][0].assets.length; j++) {
-                /* if(stickList[i][0].assest[j][0] == this.coordinate.x && 
-                    stickList[i][0].assest[j][1] == this.coordinate.y ) {
-                        console.log("içeride başkan")
-                    } 
-            }
-        }
-        */
     }
 
     go(degree, speed) {
