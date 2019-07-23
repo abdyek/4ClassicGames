@@ -1,37 +1,12 @@
 let ballList = []  // ball list in the canvas
 let stickList = []
 let blockList = [] // block index list
-let limitList = {
-    right: {
-        "0": 13 + 20 * 0,
-        "1": 13 + 20 * 1,
-        "2": 13 + 20 * 2,
-        "3": 13 + 20 * 3,
-        "4": 13 + 20 * 4,
-        "5": 13 + 20 * 5
-    },
-    left: {
-        "0": 13 + 20 * 1,
-        "1": 13 + 20 * 2,
-        "2": 13 + 20 * 3,
-        "3": 13 + 20 * 4,
-        "4": 13 + 20 * 5,
-        "5": 13 + 20 * 6
-    },
-    up: {"0": 13 + 11*1,
-         "1": 13 + 11*2,
-         "2": 13 + 11*3,
-         "3": 13 + 11*4,
-         "4": 13 + 11*5,
-         "5": 13 + 11*6,
-    },
-    down: {
-        "0": 13 + 11 * 0,
-        "1": 13 + 11 * 1,
-        "2": 13 + 11 * 2,
-        "3": 13 + 11 * 3,
-        "4": 13 + 11 * 4,
-        "5": 13 + 11 * 5
+
+let mapGrid = new Array(19)
+for (var i = 0 ; i < mapGrid.length; i++) {
+    mapGrid[i] = new Array(30)
+    for ( var j=0; j<mapGrid[i].length; j++) {
+        mapGrid[i][j] = null
     }
 }
 
@@ -49,7 +24,9 @@ function gameLoop() {
     }
 
     for(var i = 0; i<blockList.length; i++) {
-        blockList[i].draw()
+        if(blockList[i]) {
+            blockList[i].draw()
+        }
     }
 
     window.requestAnimationFrame(gameLoop)

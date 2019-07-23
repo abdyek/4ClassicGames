@@ -17,6 +17,7 @@ class Ball {
         this.speed = 0   // per frame
         this.color = "red"
         this.addList()
+        this.brokenBlock = new Array()
     }
     addList() {
         ballList.push(this)
@@ -50,43 +51,87 @@ class Ball {
 
         // horizontal block control
         if(this.route.x > 0) {  // go right
-            var min = (limitList.right[this.blockIndex.y1] <
-                    limitList.right[this.blockIndex.y2]) ? 
-                    this.blockIndex.y1 : this.blockIndex.y2
-            if(this.coordinate.x + 10 > limitList.right[min] &&
-                this.coordinate.x < limitList.right[min]) {
-                this.setAngle(180 - this.angle)
+            if(mapGrid[this.blockIndex.x2][this.blockIndex.y1]) {
+                this.addBrokenBlock(this.blockIndex.x2, this.blockIndex.y1, 180)
             }
-
-            // control
+            if(mapGrid[this.blockIndex.x2][this.blockIndex.y2]) {
+                this.addBrokenBlock(this.blockIndex.x2, this.blockIndex.y2, 180)
+            }
         } else if (this.route.x < 0) {  // go left
-            var max = (limitList.left[this.blockIndex.y1] >
-                    limitList.left[this.blockIndex.y2]) ? 
-                    this.blockIndex.y1 : this.blockIndex.y2
-            if(this.coordinate.x < limitList.left[max] &&
-                this.coordinate.x + 10 > limitList.left[max]) {
-                this.setAngle(180 - this.angle)
+            if(mapGrid[this.blockIndex.x1][this.blockIndex.y1]) {
+                this.addBrokenBlock(this.blockIndex.x1, this.blockIndex.y1, 180)
+            }
+            if(mapGrid[this.blockIndex.x1][this.blockIndex.y2]) {
+                this.addBrokenBlock(this.blockIndex.x1, this.blockIndex.y2, 180)
             }
         }
 
         // vertical block control
         if(this.route.y < 0) {  // go up
-            var max = (limitList.up[this.blockIndex.x1] >
-                    limitList.up[this.blockIndex.x2]) ? 
-                    this.blockIndex.x1 : this.blockIndex.x2
-            if(this.coordinate.y < limitList.up[max] &&
-                this.coordinate.y + 10 > limitList.up[max]) {
-                this.setAngle(360 - this.angle)
+            if(mapGrid[this.blockIndex.x1][this.blockIndex.y1]) {
+                this.addBrokenBlock(this.blockIndex.x1, this.blockIndex.y1, 90)
+            }
+            if(mapGrid[this.blockIndex.x2][this.blockIndex.y1]) {
+                this.addBrokenBlock(this.blockIndex.x2, this.blockIndex.y1, 90)
             }
         } else if (this.route.y > 0) {  // go down
-            var min = (limitList.up[this.blockIndex.x1] <
-                    limitList.up[this.blockIndex.x2]) ? 
-                    this.blockIndex.x1 : this.blockIndex.x2
-            if(this.coordinate.y + 10 > limitList.down[min] &&
-                this.coordinate.y < limitList.down[min]) {
-                this.setAngle(360 - this.angle)
+            if(mapGrid[this.blockIndex.x1][this.blockIndex.y2]) {
+                this.addBrokenBlock(this.blockIndex.x1, this.blockIndex.y2, 90)
+            }
+            if(mapGrid[this.blockIndex.x2][this.blockIndex.y2]) {
+                this.addBrokenBlock(this.blockIndex.x2, this.blockIndex.y2, 90)
             }
         }
+        if(this.brokenBlock.length == 3) {       //     ## ##
+            var degree = 135                     //      * ##    --> there are 3 blocks
+            if(this.route.y < 0) {  // go up     //                 * is a ball
+                // the index of corner block in brokenBlock is 0
+                for( var i = 1; i<this.brokenBlock.length; i++) {
+                    mapGrid[this.brokenBlock[i].x][this.brokenBlock[i].y].explode()
+                }
+                if(this.route.x < 0)  {
+                    degree = 205
+                }
+            } else if(this.route.y > 0) {    // go down 
+                // the index of corner block in brokenBlock is 1
+                mapGrid[this.brokenBlock[0].x][this.brokenBlock[0].y].explode()
+                mapGrid[this.brokenBlock[2].x][this.brokenBlock[2].y].explode()
+                if(this.route.x > 0) {
+                    degree = 205
+                }
+            }
+            this.setAngle(degree * 2 - this.angle)
+            //this.stop()   // SONRA SİLİNECEK
+            console.log(this.brokenBlock)  // BU DA !
+        } else if(this.brokenBlock.length == 2 &&                           // ## ## --> there are 2 blocks , * is a ball
+            this.brokenBlock[0].degree == this.brokenBlock[1].degree){      //   *
+            mapGrid[this.brokenBlock[0].x][this.brokenBlock[0].y].explode()
+            mapGrid[this.brokenBlock[1].x][this.brokenBlock[1].y].explode()
+            this.setAngle(this.brokenBlock[0].degree * 2 - this.angle)
+        } else if(this.brokenBlock.length == 2) {                           // ##     --> there are 2 blocks but they don't have
+                                                                           //  * ##                           same degree
+            if(this.route.y < 0) {  // go up     //                 * is a ball
+                // the index of corner block in brokenBlock is 0
+                for( var i = 1; i<this.brokenBlock.length; i++) {
+                    mapGrid[this.brokenBlock[i].x][this.brokenBlock[i].y].explode()
+                }
+                if(this.route.x < 0)  {
+                    degree = 205
+                }
+            } else if(this.route.y > 0) {    // go down 
+                // the index of corner block in brokenBlock is 1
+                mapGrid[this.brokenBlock[0].x][this.brokenBlock[0].y].explode()
+                mapGrid[this.brokenBlock[1].x][this.brokenBlock[1].y].explode()
+                if(this.route.x > 0) {
+                    degree = 205
+                }
+                this.setAngle(degree * 2 - this.angle)
+            }
+        } else if(this.brokenBlock.length == 1) {                       // only a block
+            mapGrid[this.brokenBlock[0].x][this.brokenBlock[0].y].explode()
+            this.setAngle(this.brokenBlock[0].degree * 2 - this.angle)
+        }
+        this.brokenBlock = new Array()
     }
 
     go(degree, speed) {
@@ -112,6 +157,18 @@ class Ball {
     updateRoute() {
         this.route.x = this.speed * getCos(this.angle)
         this.route.y = this.speed * getSin(this.angle)  * -1  // coordinate system in canvas is reverse so I multiply -1
+    }
+    addBrokenBlock(x, y, degree) {
+        var bulundu = false
+        for(var i=0;i<this.brokenBlock.length;i++) {
+            if(this.brokenBlock[i].x == x && this.brokenBlock[i].y == y) {
+            bulundu = true
+            break
+            }
+        }
+        if(!bulundu) {
+            this.brokenBlock.push({x: x, y: y, degree: degree})
+        }
     }
 
 }
@@ -150,12 +207,19 @@ class Stick {           // cross stick is not now :(
 
 class Block {
     constructor(xInd, yInd, color) {
+        this.indexInBlockList = blockList.length
         blockList.push(this)
         this.index = {x:xInd, y:yInd}
         this.color = color
+        mapGrid[xInd][yInd] = this
     }
     draw() {
         drawRectangle(13 + this.index.x*20, 13 + this.index.y*11, 19, 10, this.color)
+    }
+    explode() {
+        console.log("Boom")
+        blockList[this.indexInBlockList] = null
+        mapGrid[this.index.x][this.index.y] = null
     }
 }
 
@@ -163,6 +227,7 @@ class Block {
 
 function getSin(degree) { return parseFloat( Math.sin(Math.PI * degree / 180).toFixed(3) ) }
 function getCos(degree) { return parseFloat( Math.cos(Math.PI * degree / 180).toFixed(3) ) }
+
 
 // default
 let topStick = new Stick(10, 10, 390, 10, "grey") 
@@ -175,6 +240,7 @@ let mapPattern = [{xInd:0,yInd: 0, color:"red"},
                     {xInd:2,yInd: 2, color:"yellow"},
                     {xInd:3,yInd: 3, color:"fuchsia"},
                     {xInd:4,yInd: 4, color:"black"},
+                    {xInd:4,yInd: 3, color:"white"},
                     {xInd:5,yInd: 5, color:"orange"}]  // for example
 
 // creating of blocks
