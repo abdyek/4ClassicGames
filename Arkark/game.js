@@ -6,6 +6,9 @@ context = canvas.getContext("2d")
 canvas.width = 400
 canvas.height = 600
 
+let numberOfUnbrokenBlocks = 0
+let numberOfStick = 3
+
 // ball
 class Ball {
     constructor(startX, startY) {
@@ -17,7 +20,7 @@ class Ball {
         this.speed = 0   // per frame
         this.color = "red"
         this.addList()
-        this.brokenBlock = new Array()
+        this.brokenBlock = new Array()   // this list for will be broken block
     }
     addList() {
         ballList.push(this)
@@ -129,7 +132,22 @@ class Ball {
             }
         } else if(this.brokenBlock.length == 1) {                       // only a block
             mapGrid[this.brokenBlock[0].x][this.brokenBlock[0].y].explode()
-            this.setAngle(this.brokenBlock[0].degree * 2 - this.angle)
+            if(this.blockIndex.x1 == this.blockIndex.x2 &&          //          *   // the ball is over the block
+               this.blockIndex.y1 != this.blockIndex.y2) {          //         ###
+                this.setAngle(360 - this.angle)
+            } else if(this.blockIndex.x1 != this.blockIndex.x2 &&
+                    this.blockIndex.y1 == this.blockIndex.y2) {
+                this.setAngle(180 - this.angle)
+            } else if(this.blockIndex.x1 != this.blockIndex.x2 &&
+                this.blockIndex.y1 != this.blockIndex.y2) {
+                    if((this.blockIndex.x1==this.brokenBlock[0].x && this.blockIndex.y2 == this.brokenBlock[0].y) ||
+                        (this.blockIndex.x2==this.brokenBlock[0].x && this.blockIndex.y1 == this.brokenBlock[0].y)) {
+                            this.setAngle(270 - this.angle)
+                    } else {
+                            this.setAngle(90 - this.angle)
+                    }
+                }
+            //this.setAngle(this.brokenBlock[0].degree * 2 - this.angle)
         }
         this.brokenBlock = new Array()
     }
@@ -212,6 +230,7 @@ class Block {
         this.index = {x:xInd, y:yInd}
         this.color = color
         mapGrid[xInd][yInd] = this
+        numberOfUnbrokenBlocks++
     }
     draw() {
         drawRectangle(13 + this.index.x*20, 13 + this.index.y*11, 19, 10, this.color)
@@ -220,6 +239,8 @@ class Block {
         console.log("Boom")
         blockList[this.indexInBlockList] = null
         mapGrid[this.index.x][this.index.y] = null
+        numberOfUnbrokenBlocks--
+        controlForFinish()
     }
 }
 
@@ -227,6 +248,19 @@ class Block {
 
 function getSin(degree) { return parseFloat( Math.sin(Math.PI * degree / 180).toFixed(3) ) }
 function getCos(degree) { return parseFloat( Math.cos(Math.PI * degree / 180).toFixed(3) ) }
+
+function controlForFinish() {
+    if(!numberOfUnbrokenBlocks) {
+        console.log("new game!!")
+        alert("bölüm geçildi looo")
+    }
+}
+
+function controlForStick() {
+    if(!numberOfStick) {
+        console.log("game over")
+    }
+}
 
 
 // default
