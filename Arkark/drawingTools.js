@@ -22,3 +22,6 @@ var drawRectangle = function (x, y, width, height, color) {
     context.strokeStyle = color;
     context.stroke();
 }
+
+function getSin(degree) { return parseFloat( Math.sin(Math.PI * degree / 180).toFixed(3) ) }
+function getCos(degree) { return parseFloat( Math.cos(Math.PI * degree / 180).toFixed(3) ) }

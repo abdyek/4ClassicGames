@@ -10,5 +10,6 @@ body {
     background-color:#66767c;
     display:block;
     margin:0 auto;
+    cursor: pointer;
 }
 
