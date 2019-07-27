@@ -29,6 +29,8 @@ function gameLoop() {
         }
     }
 
+    drawBoard()
+
     window.requestAnimationFrame(gameLoop)
 }
 

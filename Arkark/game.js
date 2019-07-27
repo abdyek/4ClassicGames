@@ -8,6 +8,9 @@ canvas.height = 600
 
 let numberOfUnbrokenBlocks = 0
 let numberOfBall = 3
+let level = 1
+let score = 0
+let multipleBlock = 0
 
 // ball
 class Ball {
@@ -57,6 +60,8 @@ class Ball {
                 newDegree = 10
             }
             this.setAngle(newDegree)
+            score += parseInt(Math.pow(1.5, multipleBlock))
+            multipleBlock = 0
         } else if (this.coordinate.y > 550) {
             this.reset()
         }
@@ -163,6 +168,11 @@ class Ball {
     }
 
     setAngle(degree) {
+        if(degree==0) {
+            degree = 5
+        } else if(degree==180) {
+            degree = 175
+        }
         this.angle = degree
         this.updateRoute()
     }
@@ -198,7 +208,6 @@ class Ball {
         this.route.y = 0
         this.updatePositionOnMovableStick()
         this.readyToGo = true
-        console.log("!!")
         controlForGameOver()
         numberOfBall--
     }
@@ -240,6 +249,8 @@ class Block {
         blockList[this.indexInBlockList] = null
         mapGrid[this.index.x][this.index.y] = null
         numberOfUnbrokenBlocks--
+        score += 10
+        multipleBlock++
         controlForFinish()
     }
 }
@@ -250,6 +261,7 @@ class Block {
 function controlForFinish() {
     if(!numberOfUnbrokenBlocks) {
         console.log("new game!!")
+        levelUp()
     }
 }
 
@@ -269,6 +281,33 @@ function start() {
         mainBall.readyToGo = false
         mainBall.go(90, 3)
     }
+}
+
+function addToScore(point) {
+    score += point
+}
+
+function levelUp() {
+    score += 100 * level
+    level++
+}
+
+// to draw text
+function drawBoard() {
+    // level
+    context.fillStyle = "blue";
+    context.font = "16px Noto Sans";
+    context.fillText("Level " + level, 320, 580);
+
+    // number of ball
+    context.fillStyle = "red";
+    context.font = "16px Noto Sans";
+    context.fillText("Ball " + numberOfBall, 180, 580);
+    
+    // score
+    context.fillStyle = "red";
+    context.font = "16px Noto Sans";
+    context.fillText("Score " + score, 30, 580);
 }
 
 
