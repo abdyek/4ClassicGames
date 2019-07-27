@@ -7,7 +7,7 @@ canvas.width = 405
 canvas.height = 600
 
 let numberOfUnbrokenBlocks = 0
-let numberOfStick = 3
+let numberOfBall = 3
 
 // ball
 class Ball {
@@ -21,6 +21,7 @@ class Ball {
         this.color = "red"
         this.addList()
         this.brokenBlock = new Array()   // this list for will be broken block
+        this.readyToGo = true
     }
     addList() {
         ballList.push(this)
@@ -187,10 +188,19 @@ class Ball {
             this.brokenBlock.push({x: x, y: y})
         }
     }
+    updatePositionOnMovableStick() {
+        this.coordinate.x = movableStick.x1 + (movableStick.width - 10) / 2
+        this.coordinate.y = movableStick.y1 - 11
+    }
 
     reset() {
         this.route.x = 0
         this.route.y = 0
+        this.updatePositionOnMovableStick()
+        this.readyToGo = true
+        console.log("!!")
+        controlForGameOver()
+        numberOfBall--
     }
 
 }
@@ -234,7 +244,7 @@ class Block {
     }
 }
 
-// other function
+// other functions
 
 
 function controlForFinish() {
@@ -243,9 +253,21 @@ function controlForFinish() {
     }
 }
 
-function controlForStick() {
-    if(!numberOfStick) {
+function controlForGameOver() {
+    if(numberOfBall == 0) {
         console.log("game over")
+        mainBall.readyToGo = false
+        // clear ballList
+        for (var i = 0; i<ballList.length; i++) {
+            ballList[i].draw = ()=>{}
+        }
+    }
+}
+
+function start() {
+    if(mainBall.readyToGo) {
+        mainBall.readyToGo = false
+        mainBall.go(90, 3)
     }
 }
 
@@ -269,7 +291,13 @@ function getCoor(e){
         movableStick.x2 = newX2
 
     }
+    if(mainBall.readyToGo) {
+        mainBall.updatePositionOnMovableStick()
+    }
 }
+
+let mainBall = new Ball(movableStick.x1 + (movableStick.width - 10) / 2, movableStick.y1 - 11) 
+
 
 
 let mapPattern = [{xInd:0,yInd: 0, color:"red"},
