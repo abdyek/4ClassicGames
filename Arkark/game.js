@@ -11,6 +11,8 @@ let numberOfBall = 3
 let level = 1
 let score = 0
 let multipleBlock = 0
+let paused = false
+let buffer
 
 // ball
 class Ball {
@@ -277,7 +279,7 @@ function controlForGameOver() {
 }
 
 function start() {
-    if(mainBall.readyToGo) {
+    if(!paused && mainBall.readyToGo) {
         mainBall.readyToGo = false
         mainBall.go(90, 3)
     }
@@ -292,24 +294,6 @@ function levelUp() {
     level++
 }
 
-// to draw text
-function drawBoard() {
-    // level
-    context.fillStyle = "blue";
-    context.font = "16px Noto Sans";
-    context.fillText("Level " + level, 320, 580);
-
-    // number of ball
-    context.fillStyle = "red";
-    context.font = "16px Noto Sans";
-    context.fillText("Ball " + numberOfBall, 180, 580);
-    
-    // score
-    context.fillStyle = "red";
-    context.font = "16px Noto Sans";
-    context.fillText("Score " + score, 30, 580);
-}
-
 
 // default
 let topStick = new Stick(10, 10, 395, 10, "grey") 
@@ -322,21 +306,101 @@ movableStick.width = movableStick.x2 - movableStick.x1
 let y
 let x
 function getCoor(e){
-    x=e.clientX;
-    let newX1 = x - (window.innerWidth - canvas.width + movableStick.width) / 2
-    let newX2 = newX1 + movableStick.width
-    if(newX1>10 && newX2 < canvas.width - 10) {
-        movableStick.x1 = newX1
-        movableStick.x2 = newX2
+    if(!paused) {
+        x=e.clientX
+        y=e.clientY
+        let newX1 = x - (window.innerWidth - canvas.width + movableStick.width) / 2
+        let newX2 = newX1 + movableStick.width
+        if(newX1>10 && newX2 < canvas.width - 10) {
+            movableStick.x1 = newX1
+            movableStick.x2 = newX2
 
-    }
-    if(mainBall.readyToGo) {
-        mainBall.updatePositionOnMovableStick()
+        }
+        if(mainBall.readyToGo) {
+            mainBall.updatePositionOnMovableStick()
+        }
     }
 }
 
 let mainBall = new Ball(movableStick.x1 + (movableStick.width - 10) / 2, movableStick.y1 - 11) 
 
+// draw
+let drawMain
+let drawBar
+
+// main
+function drawGame() {
+    for(var i = 0; i<ballList.length; i++) {
+        ballList[i].draw()
+    }
+
+    for(var i = 0; i<stickList.length; i++) {
+        stickList[i][0].draw()
+    }
+
+    for(var i = 0; i<blockList.length; i++) {
+        if(blockList[i]) {
+            blockList[i].draw()
+        }
+    }
+}
+
+function drawWelcome() {
+    drawText("Arkark", "black", "50px Saira Stencil One", 120, 275)
+}
+
+// bar
+function drawBoard() {
+    // level
+    drawText("Level "+level, "white", "16px Noto Sans", 270, 580)
+
+    // number of ball
+    drawCircle(165, 570, 5, "red")
+    drawText("x " + numberOfBall, "white", "16px Noto Sans", 180, 580)
+    
+    // score
+    drawText("Score " + score, "white", "16px Noto Sans", 30, 580)
+
+    // pause
+    if(paused) {
+        drawPng("img/play.png", 370, 565)
+        drawText("Paused", "#dc3545", "50px Noto Sans", 120, 275)
+    } else {
+        drawPng("img/pause.png", 370, 565)
+    }
+}
+
+function drawPlayButton() {
+    drawText("Play", "white", "25px Noto Sans", 340, 580)
+}
+
+function toClick() {
+    if(drawBar==drawPlayButton && x > (window.innerWidth - canvas.width)/2 + 340 && y > (window.innerHeight - canvas.height)/2 + 550) {
+        drawMain = drawGame
+        drawBar = drawBoard
+    } else if(drawMain==drawGame && y < 550) {
+        start()
+    } else if(drawBar==drawBoard && x > 370 + (window.innerWidth - canvas.width)/2 ) {
+        if(!paused) {
+            buffer = {
+                x: mainBall.route.x,
+                y: mainBall.route.y,
+                speed: mainBall.speed
+            }
+            mainBall.stop()
+            paused = true
+        } else {
+            mainBall.route.x = buffer.x
+            mainBall.route.y = buffer.y
+            mainBall.speed = buffer.speed
+            paused = false
+        }
+
+    }
+}
+
+drawMain = drawWelcome
+drawBar = drawPlayButton
 
 
 let mapPattern = [{xInd:0,yInd: 0, color:"red"},

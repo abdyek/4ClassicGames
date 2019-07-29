@@ -15,21 +15,8 @@ function gameLoop() {
     // clear
     context.clearRect(0,0,canvas.width, canvas.height)
 
-    for(var i = 0; i<ballList.length; i++) {
-        ballList[i].draw()
-    }
-
-    for(var i = 0; i<stickList.length; i++) {
-        stickList[i][0].draw()
-    }
-
-    for(var i = 0; i<blockList.length; i++) {
-        if(blockList[i]) {
-            blockList[i].draw()
-        }
-    }
-
-    drawBoard()
+    drawMain()
+    drawBar()
 
     window.requestAnimationFrame(gameLoop)
 }
