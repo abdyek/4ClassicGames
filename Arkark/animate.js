@@ -5,9 +5,6 @@ let blockList = [] // block index list
 let mapGrid = new Array(20)
 for (var i = 0 ; i < mapGrid.length; i++) {
     mapGrid[i] = new Array(30)
-    for ( var j=0; j<mapGrid[i].length; j++) {
-        mapGrid[i][j] = null
-    }
 }
 
 function gameLoop() {

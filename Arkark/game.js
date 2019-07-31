@@ -6,10 +6,10 @@ context = canvas.getContext("2d")
 canvas.width = 405
 canvas.height = 600
 
-let numberOfUnbrokenBlocks = 0
-let numberOfBall = 3
+let numberOfUnbrokenBlocks
+let numberOfBall
 let level = 1
-let score = 0
+let score
 let multipleBlock = 0
 let paused = false
 let buffer
@@ -210,8 +210,9 @@ class Ball {
         this.route.y = 0
         this.updatePositionOnMovableStick()
         this.readyToGo = true
-        controlForGameOver()
+        multipleBlock = 0
         numberOfBall--
+        controlForGameOver()
     }
 
 }
@@ -253,28 +254,23 @@ class Block {
         numberOfUnbrokenBlocks--
         score += 10
         multipleBlock++
-        controlForFinish()
+        controlForLevelUp()
     }
 }
 
 // other functions
 
 
-function controlForFinish() {
+function controlForLevelUp() {
     if(!numberOfUnbrokenBlocks) {
-        console.log("new game!!")
         levelUp()
     }
 }
 
 function controlForGameOver() {
-    if(numberOfBall == 0) {
-        console.log("game over")
-        mainBall.readyToGo = false
-        // clear ballList
-        for (var i = 0; i<ballList.length; i++) {
-            ballList[i].draw = ()=>{}
-        }
+    if(numberOfBall < 0) {
+        drawMain = drawGameOver
+        drawBar = drawPlayButton
     }
 }
 
@@ -290,8 +286,40 @@ function addToScore(point) {
 }
 
 function levelUp() {
-    score += 100 * level
+    addToScore(100 * level)
     level++
+    numberOfBall++
+    mainBall.reset()
+    mainBall.speed = 0
+    loadLevel(level)
+}
+
+function play() {
+    numberOfUnbrokenBlocks = 0
+    numberOfBall = 2
+    level = 1
+    score = 0
+    loadLevel(1)
+    drawMain = drawGame
+    drawBar = drawBoard
+}
+
+function loadLevel(index) {
+    index--
+    clearMapGrid()
+    blockList = []
+    for (var i = 0 ; i < mapPattern[index].length; i++) {
+        new Block(mapPattern[index][i].xInd, mapPattern[index][i].yInd, mapPattern[index][i].color)
+    }
+
+}
+
+function clearMapGrid() {
+    for (var i = 0 ; i < mapGrid.length; i++) {
+        for ( var j=0; j<mapGrid[i].length; j++) {
+            mapGrid[i][j] = null
+        }
+    }
 }
 
 
@@ -349,6 +377,11 @@ function drawWelcome() {
     drawText("Arkark", "black", "50px Saira Stencil One", 120, 275)
 }
 
+function drawGameOver() {
+    drawText("Game Over", "red", "32px Noto Sans", 120, 300)
+    drawText("Score " + score, "white", "24px Noto Sans", 125, 350)
+}
+
 // bar
 function drawBoard() {
     // level
@@ -376,8 +409,7 @@ function drawPlayButton() {
 
 function toClick() {
     if(drawBar==drawPlayButton && x > (window.innerWidth - canvas.width)/2 + 340 && y > (window.innerHeight - canvas.height)/2 + 550) {
-        drawMain = drawGame
-        drawBar = drawBoard
+        play()
     } else if(drawMain==drawGame && y < 550) {
         start()
     } else if(drawBar==drawBoard && x > 370 + (window.innerWidth - canvas.width)/2 ) {
@@ -403,6 +435,7 @@ drawMain = drawWelcome
 drawBar = drawPlayButton
 
 
+/*
 let mapPattern = [{xInd:0,yInd: 0, color:"red"},
                     {xInd:1,yInd: 1, color:"purple"},
                     {xInd:2,yInd: 2, color:"yellow"},
@@ -411,11 +444,28 @@ let mapPattern = [{xInd:0,yInd: 0, color:"red"},
                     {xInd:4,yInd: 3, color:"white"},
                     {xInd:18,yInd: 0, color:"white"},
                     {xInd:5,yInd: 5, color:"orange"}]  // for example
+                    */
 
-// creating of blocks
-for (var i = 0 ; i < mapPattern.length; i++) {
-    new Block(mapPattern[i].xInd, mapPattern[i].yInd, mapPattern[i].color)
-}
+let mapPattern = {0: [{xInd:0,yInd: 0, color:"red"},
+                    {xInd:1,yInd: 1, color:"purple"},
+                    {xInd:2,yInd: 2, color:"yellow"},
+                    {xInd:3,yInd: 3, color:"fuchsia"},
+                    {xInd:4,yInd: 4, color:"black"},
+                    {xInd:4,yInd: 3, color:"white"},
+                    {xInd:18,yInd: 0, color:"white"},
+                    {xInd:5,yInd: 5, color:"orange"}],
+                  1: [{xInd:0,yInd: 1, color:"grey"},
+                    {xInd:0,yInd: 0, color:"black"},
+                    {xInd:1,yInd: 0, color:"white"},
+                    {xInd:2,yInd: 0, color:"black"},
+                    {xInd:3,yInd: 0, color:"white"},
+                    {xInd:4,yInd: 0, color:"black"},
+                    {xInd:5,yInd: 0, color:"white"},
+                    {xInd:6,yInd: 0, color:"black"}],
+                  }  // for example
+
+
+                    
 
 // for animate
 window.requestAnimationFrame(gameLoop)
