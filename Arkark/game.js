@@ -23,7 +23,7 @@ class Ball {
         this.blockIndex = {x1:0, y1:0, x2: 0, y2:0}
                         // x1, y1, x2, y2 are not point, index
         this.speed = 0   // per frame
-        this.color = "red"
+        this.color = "#c1cf94"
         this.addList()
         this.brokenBlock = new Array()   // this list for will be broken block
         this.readyToGo = true
@@ -47,12 +47,12 @@ class Ball {
         drawCircle(this.coordinate.x, this.coordinate.y, 5, this.color)
         this.coordinate.x += this.route.x
         this.coordinate.y += this.route.y
-        if(this.coordinate.x > 385) {
+        if(this.coordinate.x > 385 && this.route.x > 0) {
             this.setAngle(180 - this.angle)
-        } else if(this.coordinate.x < 10) {
+        } else if(this.coordinate.x < 10 && this.route.x < 0) {
             this.setAngle(180 - this.angle)
         }
-        if(this.coordinate.y < 10) {
+        if(this.coordinate.y < 10 && this.route.y < 0) {
             this.setAngle(360 - this.angle)
         } else if (this.coordinate.y + 10 > 500 && this.coordinate.y + 10 < 505 && this.coordinate.x + 10 > movableStick.x1 && this.coordinate.x < movableStick.x2) {
             let newDegree = Math.abs((movableStick.x2 - this.coordinate.x + 5) * 150 / movableStick.width)
@@ -291,7 +291,12 @@ function levelUp() {
     numberOfBall++
     mainBall.reset()
     mainBall.speed = 0
-    loadLevel(level)
+    if(levels[level]) {
+        loadLevel(level)
+    } else {
+        drawMain = drawTheEnd
+        drawBar = drawPlayButton
+    }
 }
 
 function play() {
@@ -305,11 +310,10 @@ function play() {
 }
 
 function loadLevel(index) {
-    index--
     clearMapGrid()
     blockList = []
-    for (var i = 0 ; i < mapPattern[index].length; i++) {
-        new Block(mapPattern[index][i].xInd, mapPattern[index][i].yInd, mapPattern[index][i].color)
+    for (var i = 0 ; i < levels[index].length; i++) {
+        new Block(levels[index][i].xInd, levels[index][i].yInd, levels[index][i].color)
     }
 
 }
@@ -324,11 +328,11 @@ function clearMapGrid() {
 
 
 // default
-let topStick = new Stick(10, 10, 395, 10, "grey") 
-let leftStick = new Stick(10, 10, 10, 550, "grey") 
-let rightStick = new Stick(395, 10, 395, 550, "grey") 
+let topStick = new Stick(10, 10, 395, 10, "#638379") 
+let leftStick = new Stick(10, 10, 10, 550, "#638379") 
+let rightStick = new Stick(395, 10, 395, 550, "#638379") 
 
-let movableStick = new Stick((canvas.width - 75) / 2, 500, (canvas.width - 75) / 2 + 75, 500, "pink")
+let movableStick = new Stick((canvas.width - 75) / 2, 500, (canvas.width - 75) / 2 + 75, 500, "#e38c95")
 movableStick.width = movableStick.x2 - movableStick.x1
 
 let y
@@ -374,37 +378,42 @@ function drawGame() {
 }
 
 function drawWelcome() {
-    drawText("Arkark", "black", "50px Saira Stencil One", 120, 275)
+    drawText("Arkark", "#d9effc", "50px Saira Stencil One", 120, 275)
 }
 
 function drawGameOver() {
-    drawText("Game Over", "red", "32px Noto Sans", 120, 300)
-    drawText("Score " + score, "white", "24px Noto Sans", 125, 350)
+    drawText("Game Over", "#a22a29", "32px Noto Sans", 120, 300)
+    drawText("Score " + score, "#ddd", "24px Noto Sans", 125, 350)
+}
+
+function drawTheEnd() {
+    drawText("The End", "#61cdff", "50px Saira Stencil One", 120, 300)
+    drawText("Score " + score, "#ddd", "24px Noto Sans", 125, 350)
 }
 
 // bar
 function drawBoard() {
     // level
-    drawText("Level "+level, "white", "16px Noto Sans", 270, 580)
+    drawText("Level "+level, "#eee", "16px Noto Sans", 270, 580)
 
     // number of ball
-    drawCircle(165, 570, 5, "red")
-    drawText("x " + numberOfBall, "white", "16px Noto Sans", 180, 580)
+    drawCircle(165, 570, 5, "#c1cf94")
+    drawText("x " + numberOfBall, "#eee", "16px Noto Sans", 180, 580)
     
     // score
-    drawText("Score " + score, "white", "16px Noto Sans", 30, 580)
+    drawText("Score " + score, "#eee", "16px Noto Sans", 30, 580)
 
     // pause
     if(paused) {
         drawPng("img/play.png", 370, 565)
-        drawText("Paused", "#dc3545", "50px Noto Sans", 120, 275)
+        drawText("Paused", "#e38c95", "50px Noto Sans", 120, 275)
     } else {
         drawPng("img/pause.png", 370, 565)
     }
 }
 
 function drawPlayButton() {
-    drawText("Play", "white", "25px Noto Sans", 340, 580)
+    drawText("Play", "#ddd", "25px Noto Sans", 340, 580)
 }
 
 function toClick() {
@@ -433,36 +442,6 @@ function toClick() {
 
 drawMain = drawWelcome
 drawBar = drawPlayButton
-
-
-/*
-let mapPattern = [{xInd:0,yInd: 0, color:"red"},
-                    {xInd:1,yInd: 1, color:"purple"},
-                    {xInd:2,yInd: 2, color:"yellow"},
-                    {xInd:3,yInd: 3, color:"fuchsia"},
-                    {xInd:4,yInd: 4, color:"black"},
-                    {xInd:4,yInd: 3, color:"white"},
-                    {xInd:18,yInd: 0, color:"white"},
-                    {xInd:5,yInd: 5, color:"orange"}]  // for example
-                    */
-
-let mapPattern = {0: [{xInd:0,yInd: 0, color:"red"},
-                    {xInd:1,yInd: 1, color:"purple"},
-                    {xInd:2,yInd: 2, color:"yellow"},
-                    {xInd:3,yInd: 3, color:"fuchsia"},
-                    {xInd:4,yInd: 4, color:"black"},
-                    {xInd:4,yInd: 3, color:"white"},
-                    {xInd:18,yInd: 0, color:"white"},
-                    {xInd:5,yInd: 5, color:"orange"}],
-                  1: [{xInd:0,yInd: 1, color:"grey"},
-                    {xInd:0,yInd: 0, color:"black"},
-                    {xInd:1,yInd: 0, color:"white"},
-                    {xInd:2,yInd: 0, color:"black"},
-                    {xInd:3,yInd: 0, color:"white"},
-                    {xInd:4,yInd: 0, color:"black"},
-                    {xInd:5,yInd: 0, color:"white"},
-                    {xInd:6,yInd: 0, color:"black"}],
-                  }  // for example
 
 
                     

@@ -7,9 +7,27 @@ body {
 }
 
 #canvas {
-    background-color:#66767c;
+    background-color: #6d9086;
     display:block;
     margin:0 auto;
     cursor: pointer;
 }
 
+/* for levelGenerator */
+#colorPopup {
+    background-color: #eee;
+    width:100px;
+    position: fixed;
+    cursor: pointer;
+    left: 0;
+    right: 0;
+    border-radius: 10px;
+    padding: 4px;
+}
+.colorWrapper {
+    width:18px;
+    height:18px;
+    margin:1px;
+    float:left;
+    border-radius: 15px;
+}
