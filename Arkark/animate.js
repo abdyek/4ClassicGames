@@ -18,4 +18,6 @@ function gameLoop() {
     window.requestAnimationFrame(gameLoop)
 }
 
-window.requestAnimationFrame(gameLoop)
+window.onload = function() {
+    window.requestAnimationFrame(gameLoop)
+}

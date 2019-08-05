@@ -49,11 +49,14 @@ class Ball {
         this.coordinate.y += this.route.y
         if(this.coordinate.x > 385 && this.route.x > 0) {
             this.setAngle(180 - this.angle)
+            playSound("click")
         } else if(this.coordinate.x < 10 && this.route.x < 0) {
             this.setAngle(180 - this.angle)
+            playSound("click")
         }
         if(this.coordinate.y < 10 && this.route.y < 0) {
             this.setAngle(360 - this.angle)
+            playSound("click")
         } else if (this.coordinate.y + 10 > 500 && this.coordinate.y + 10 < 505 && this.coordinate.x + 10 > movableStick.x1 && this.coordinate.x < movableStick.x2) {
             let newDegree = Math.abs((movableStick.x2 - this.coordinate.x + 5) * 150 / movableStick.width)
             if(newDegree > 170) {
@@ -64,7 +67,9 @@ class Ball {
             this.setAngle(newDegree)
             score += parseInt(Math.pow(1.5, multipleBlock))
             multipleBlock = 0
+            playSound("click")
         } else if (this.coordinate.y > 550) {
+            playSound("negative")
             this.reset()
         }
 
@@ -249,6 +254,7 @@ class Block {
         drawRectangle(13 + this.index.x*20, 13 + this.index.y*11, 19, 10, this.color)
     }
     explode() {
+        playSound("blockCrush")
         blockList[this.indexInBlockList] = null
         mapGrid[this.index.x][this.index.y] = null
         numberOfUnbrokenBlocks--
@@ -271,6 +277,7 @@ function controlForGameOver() {
     if(numberOfBall < 0) {
         drawMain = drawGameOver
         drawBar = drawPlayButton
+        playSound("gameOver")
     }
 }
 
@@ -286,6 +293,7 @@ function addToScore(point) {
 }
 
 function levelUp() {
+    playSound("levelUp")
     addToScore(100 * level)
     level++
     numberOfBall++
@@ -382,7 +390,7 @@ function drawWelcome() {
 }
 
 function drawGameOver() {
-    drawText("Game Over", "#a22a29", "32px Noto Sans", 120, 300)
+    drawText("Game Over", "#f46f47", "32px Noto Sans", 120, 300)
     drawText("Score " + score, "#ddd", "24px Noto Sans", 125, 350)
 }
 
