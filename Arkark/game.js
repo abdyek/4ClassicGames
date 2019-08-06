@@ -65,7 +65,7 @@ class Ball {
                 newDegree = 10
             }
             this.setAngle(newDegree)
-            score += parseInt(Math.pow(1.5, multipleBlock))
+            score += Math.pow(multipleBlock, 2)
             multipleBlock = 0
             playSound("click")
         } else if (this.coordinate.y > 550) {
@@ -294,7 +294,7 @@ function addToScore(point) {
 
 function levelUp() {
     playSound("levelUp")
-    addToScore(100 * level)
+    addToScore(100 * level + Math.pow(multipleBlock,2))
     level++
     numberOfBall++
     mainBall.reset()
@@ -351,11 +351,18 @@ function getCoor(e){
         y=e.clientY
         let newX1 = x - (window.innerWidth - canvas.width + movableStick.width) / 2
         let newX2 = newX1 + movableStick.width
-        if(newX1>10 && newX2 < canvas.width - 10) {
-            movableStick.x1 = newX1
-            movableStick.x2 = newX2
-
+        //if(newX1>10 && newX2 < canvas.width - 10) {
+        movableStick.x1 = newX1
+        movableStick.x2 = newX2
+        //}
+        if(newX1<10) {
+            movableStick.x1 = 10
+            movableStick.x2 = movableStick.width + 10
+        } else if(newX2 > canvas.width - 10) {
+            movableStick.x1 = canvas.width - 10 - movableStick.width
+            movableStick.x2 = canvas.width - 10
         }
+        
         if(mainBall.readyToGo) {
             mainBall.updatePositionOnMovableStick()
         }
@@ -402,7 +409,7 @@ function drawTheEnd() {
 // bar
 function drawBoard() {
     // level
-    drawText("Level "+level, "#eee", "16px Noto Sans", 270, 580)
+    drawText("Level "+level + " / 8", "#eee", "16px Noto Sans", 260, 580)
 
     // number of ball
     drawCircle(165, 570, 5, "#c1cf94")
@@ -425,7 +432,7 @@ function drawPlayButton() {
 }
 
 function toClick() {
-    if(drawBar==drawPlayButton && x > (window.innerWidth - canvas.width)/2 + 340 && y > (window.innerHeight - canvas.height)/2 + 550) {
+    if(drawBar==drawPlayButton && x > (window.innerWidth - canvas.width)/2 + 340 && y > 558) {
         play()
     } else if(drawMain==drawGame && y < 550) {
         start()
