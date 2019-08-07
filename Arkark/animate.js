@@ -1,6 +1,7 @@
 let ballList = []  // ball list in the canvas
 let stickList = []
 let blockList = [] // block index list
+let boxList = []
 
 let mapGrid = new Array(20)
 for (var i = 0 ; i < mapGrid.length; i++) {

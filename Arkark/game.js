@@ -390,6 +390,12 @@ function drawGame() {
             blockList[i].draw()
         }
     }
+
+    for(var i=0; i<boxList.length; i++) {
+        if(boxList[i]) {
+            boxList[i].draw()
+        }
+    }
 }
 
 function drawWelcome() {
