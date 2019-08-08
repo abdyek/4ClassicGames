@@ -28,6 +28,7 @@ class Ball {
         this.addList()
         this.brokenBlock = new Array()   // this list for will be broken block
         this.readyToGo = true
+        this.superBall = false
     }
     addList() {
         ballList.push(this)
@@ -126,7 +127,7 @@ class Ball {
                     degree = 205
                 }
             }
-            this.setAngle(degree * 2 - this.angle)
+            if(!this.superBall){this.setAngle(degree * 2 - this.angle)}
         } else if(this.brokenBlock.length == 2){      //   *
             
             mapGrid[this.brokenBlock[0].x][this.brokenBlock[0].y].explode()
@@ -136,29 +137,29 @@ class Ball {
             let botBlock = (topBlock==0)?1:0
 
             if(this.blockIndex.y1 == this.brokenBlock[topBlock].y && this.blockIndex.x1 == this.brokenBlock[botBlock].x) {
-                this.setAngle(90 - this.angle)
+                if(!this.superBall) { this.setAngle(90 - this.angle) }
             } else if (this.blockIndex.y1 == this.brokenBlock[topBlock].y && this.blockIndex.x2 == this.brokenBlock[botBlock].x) {
-                this.setAngle(270 - this.angle)
+                if(!this.superBall) { this.setAngle(270 - this.angle) }
             } else if (this.brokenBlock[0].y == this.brokenBlock[1].y) {
-                this.setAngle(360 - this.angle)
+                if(!this.superBall) { this.setAngle(360 - this.angle) }
             } else if (this.brokenBlock[0].x == this.brokenBlock[1].x) {
-                this.setAngle(180 - this.angle)
+                if(!this.superBall) { this.setAngle(180 - this.angle) } 
             }
         } else if(this.brokenBlock.length == 1) {
             mapGrid[this.brokenBlock[0].x][this.brokenBlock[0].y].explode()
             if(this.blockIndex.x1 == this.blockIndex.x2 &&         
                this.blockIndex.y1 != this.blockIndex.y2) {
-                this.setAngle(360 - this.angle)
+                if(!this.superBall) { this.setAngle(360 - this.angle) }
             } else if(this.blockIndex.x1 != this.blockIndex.x2 &&
                     this.blockIndex.y1 == this.blockIndex.y2) {
-                this.setAngle(180 - this.angle)
+                    if(!this.superBall) {this.setAngle(180 - this.angle)}
             } else if(this.blockIndex.x1 != this.blockIndex.x2 &&
                 this.blockIndex.y1 != this.blockIndex.y2) {
                     if((this.blockIndex.x1==this.brokenBlock[0].x && this.blockIndex.y2 == this.brokenBlock[0].y) ||
                         (this.blockIndex.x2==this.brokenBlock[0].x && this.blockIndex.y1 == this.brokenBlock[0].y)) {
-                            this.setAngle(270 - this.angle)
+                            if(!this.superBall) { this.setAngle(270 - this.angle) }
                     } else {
-                            this.setAngle(90 - this.angle)
+                            if(!this.superBall) { this.setAngle(90 - this.angle) }
                     }
                 }
         }
@@ -218,7 +219,11 @@ class Ball {
         this.readyToGo = true
         multipleBlock = 0
         numberOfBall--
+        // reset for new level and game
         movableStick.width = 75
+        clearBoxList()
+        superBall(false)
+        // ^ reset for new level and game
         controlForGameOver()
     }
 
@@ -267,7 +272,8 @@ class Block {
     }
     tryYourChance() {
         let toBeOrNotToBe = Math.floor(Math.random() * 100)  // [0 - 99]
-        let which = Math.floor(Math.random()*5)         // [0 - 4]
+        let which = Math.floor(Math.random()*6)         // [0 - 5]
+        let yesOrNo = Math.floor(Math.random()*2)  // [0 - 1]  for superBall
         let typeOfTheBox
         if(toBeOrNotToBe<30) {  // 30%
             switch(which) {
@@ -285,6 +291,13 @@ class Block {
                 break;
                 case 4:
                     typeOfTheBox = killBall
+                break;
+                case 5:
+                    // superBall is excellent so I want to be rare it :d
+                    typeOfTheBox = killBall
+                    if(yesOrNo==0) {
+                        typeOfTheBox = superBall
+                    }
                 break;
             } 
             new Box(this.index.x * 20 + 18, this.index.y * 11 + 15, typeOfTheBox)
@@ -329,7 +342,6 @@ function levelUp() {
     numberOfBall++
     mainBall.reset()
     mainBall.speed = 0
-    clearBoxList()
     if(levels[level]) {
         loadLevel(level)
     } else {
@@ -472,18 +484,21 @@ function toClick() {
     } else if(drawMain==drawGame && y < 550) {
         start()
     } else if(drawBar==drawBoard && x > 370 + (window.innerWidth - canvas.width)/2 ) {
+        // pause button
         if(!paused) {
-            buffer = {
+            buffer = {      // I will transport that buffer in mainBall class
                 x: mainBall.route.x,
                 y: mainBall.route.y,
                 speed: mainBall.speed
             }
             mainBall.stop()
+            speedOfBoxes(0)
             paused = true
         } else {
             mainBall.route.x = buffer.x
             mainBall.route.y = buffer.y
             mainBall.speed = buffer.speed
+            speedOfBoxes(1)
             paused = false
         }
 

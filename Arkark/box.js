@@ -4,7 +4,8 @@ let colorOfBoxes = {
     expandMovableStick: "#e38c95",
     speedUp: "#00ff00",
     speedDown: "#008f00",
-    killBall: "#222"
+    killBall: "#222",
+    superBall: "#ffd700"
 }
 
 
@@ -49,13 +50,25 @@ function clearBoxList() {
     }
 }
 
+function speedOfBoxes(speed) {
+    for (var i = 0; i<boxList.length; i++) {
+        if(boxList[i]) {
+            boxList[i].speed = speed
+        }
+    }
+}
+
 // all functions
 function narrowMovableStick() {
-    movableStick.width -= 10   // I didn't control this
+    if(movableStick.width > 25) {
+        movableStick.width -= 10   // I didn't control this
+    }
 }
 
 function expandMovableStick() {
-    movableStick.width += 10   // I didn't control this
+    if(movableStick.width < 115) {
+        movableStick.width += 10   // I didn't control this
+    }
 }
 
 function speedUp() {
@@ -75,5 +88,11 @@ function speedDown() {
 function killBall() {
     playSound("negative")
     mainBall.reset()
+}
+
+function superBall(trueOrFalse=true) {
+    for(var i = 0; i<ballList.length; i++) {
+        ballList[i].superBall = trueOrFalse
+    }
 }
 
