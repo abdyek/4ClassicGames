@@ -8,6 +8,7 @@ canvas.height = 600
 
 let numberOfUnbrokenBlocks
 let numberOfBall
+let speedOfBall = 3
 let level = 1
 let score
 let multipleBlock = 0
@@ -217,6 +218,7 @@ class Ball {
         this.readyToGo = true
         multipleBlock = 0
         numberOfBall--
+        movableStick.width = 75
         controlForGameOver()
     }
 
@@ -260,7 +262,34 @@ class Block {
         numberOfUnbrokenBlocks--
         score += 10
         multipleBlock++
+        this.tryYourChance()
         controlForLevelUp()
+    }
+    tryYourChance() {
+        let toBeOrNotToBe = Math.floor(Math.random() * 100)  // [0 - 99]
+        let which = Math.floor(Math.random()*5)         // [0 - 4]
+        let typeOfTheBox
+        if(toBeOrNotToBe<30) {  // 30%
+            switch(which) {
+                case 0:
+                    typeOfTheBox = narrowMovableStick
+                break;
+                case 1:
+                    typeOfTheBox = expandMovableStick
+                break;
+                case 2:
+                    typeOfTheBox = speedUp
+                break;
+                case 3:
+                    typeOfTheBox = speedDown
+                break;
+                case 4:
+                    typeOfTheBox = killBall
+                break;
+            } 
+            new Box(this.index.x * 20 + 18, this.index.y * 11 + 15, typeOfTheBox)
+
+        }
     }
 }
 
@@ -277,6 +306,7 @@ function controlForGameOver() {
     if(numberOfBall < 0) {
         drawMain = drawGameOver
         drawBar = drawPlayButton
+        clearBoxList()
         playSound("gameOver")
     }
 }
@@ -284,7 +314,7 @@ function controlForGameOver() {
 function start() {
     if(!paused && mainBall.readyToGo) {
         mainBall.readyToGo = false
-        mainBall.go(90, 3)
+        mainBall.go(90, speedOfBall)
     }
 }
 
@@ -299,6 +329,7 @@ function levelUp() {
     numberOfBall++
     mainBall.reset()
     mainBall.speed = 0
+    clearBoxList()
     if(levels[level]) {
         loadLevel(level)
     } else {
@@ -351,10 +382,8 @@ function getCoor(e){
         y=e.clientY
         let newX1 = x - (window.innerWidth - canvas.width + movableStick.width) / 2
         let newX2 = newX1 + movableStick.width
-        //if(newX1>10 && newX2 < canvas.width - 10) {
         movableStick.x1 = newX1
         movableStick.x2 = newX2
-        //}
         if(newX1<10) {
             movableStick.x1 = 10
             movableStick.x2 = movableStick.width + 10

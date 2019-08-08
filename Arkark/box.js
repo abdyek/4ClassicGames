@@ -1,18 +1,26 @@
 
+let colorOfBoxes = {
+    narrowMovableStick: "#a1636a",
+    expandMovableStick: "#e38c95",
+    speedUp: "#00ff00",
+    speedDown: "#008f00",
+    killBall: "#222"
+}
+
+
 class Box {
-    constructor(x,y,color,speed, text, func) {
-        this.width = 20
-        this.height = 20
+    constructor(x,y, func) {
+        this.func = func
+        this.width = 10
+        this.height = 10
         this.x1 = x
         this.y1 = y
         this.x2 = x + this.width
         this.y2 = y + this.height
-        this.color = color
-        this.speed = speed
-        this.text = text
+        this.color = colorOfBoxes[func.name]
+        this.speed = 1
         this.indexInBoxList = boxList.length
         boxList[this.indexInBoxList] = this
-        this.func = func
     }
     draw() {
         drawRectangle(this.x1, this.y1, this.width, this.height, this.color)
@@ -35,6 +43,12 @@ class Box {
     }
 }
 
+function clearBoxList() {
+    for (var i = 0; i<boxList.length; i++) {
+        boxList[i] = null
+    }
+}
+
 // all functions
 function narrowMovableStick() {
     movableStick.width -= 10   // I didn't control this
@@ -42,5 +56,24 @@ function narrowMovableStick() {
 
 function expandMovableStick() {
     movableStick.width += 10   // I didn't control this
+}
+
+function speedUp() {
+    if(mainBall.speed<5) {
+        mainBall.speed += 1
+        mainBall.updateRoute()  // for update speed
+    }
+}
+
+function speedDown() {
+    if(mainBall.speed>1) {
+        mainBall.speed -= 1
+        mainBall.updateRoute() // for update speed
+    }
+}
+
+function killBall() {
+    playSound("negative")
+    mainBall.reset()
 }
 
