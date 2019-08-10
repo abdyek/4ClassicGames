@@ -93,18 +93,3 @@ function generate() {
     output += "],"
     console.log(output)
 }
-
-/*
-0: [{xInd:9,yInd: 3, color:colors[0]},
-                    {xInd:9,yInd: 4, color:colors[1]},
-                    {xInd:9,yInd: 5, color:colors[2]},
-                    {xInd:9,yInd: 6, color:colors[0]},
-                    {xInd:9,yInd: 7, color:colors[1]},
-                    {xInd:9,yInd: 8, color:colors[2]},
-                    {xInd:9,yInd: 9, color:colors[0]},
-                    {xInd:9,yInd: 10, color:colors[1]},
-                    {xInd:9,yInd: 11, color:colors[2]},
-                    {xInd:9,yInd: 12, color:colors[0]},
-                    {xInd:9,yInd: 13, color:colors[1]},
-                    {xInd:9,yInd: 14, color:colors[2]}],
-                    */

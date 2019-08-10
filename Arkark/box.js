@@ -5,7 +5,8 @@ let colorOfBoxes = {
     speedUp: "#00ff00",
     speedDown: "#008f00",
     killBall: "#222",
-    superBall: "#ffd700"
+    superBall: "#ffd700",
+    threeBalls: "#c1cf94"
 }
 
 
@@ -45,9 +46,7 @@ class Box {
 }
 
 function clearBoxList() {
-    for (var i = 0; i<boxList.length; i++) {
-        boxList[i] = null
-    }
+    boxList = []
 }
 
 function speedOfBoxes(speed) {
@@ -72,16 +71,20 @@ function expandMovableStick() {
 }
 
 function speedUp() {
-    if(mainBall.speed<5) {
-        mainBall.speed += 1
-        mainBall.updateRoute()  // for update speed
+    for(var i = 0; i<ballList.length; i++) {
+        if(ballList[i]&&ballList[i].speed<5 && !ballList[i].readyToGo) {      // max 5
+            ballList[i].speed +=1
+            ballList[i].updateRoute()
+        }
     }
 }
 
 function speedDown() {
-    if(mainBall.speed>1) {
-        mainBall.speed -= 1
-        mainBall.updateRoute() // for update speed
+    for(var i = 0; i<ballList.length; i++) {
+        if(ballList[i]&&ballList[i].speed>1 && !ballList[i].readyToGo) {      // min 1
+            ballList[i].speed -=1
+            ballList[i].updateRoute()
+        }
     }
 }
 
@@ -92,7 +95,24 @@ function killBall() {
 
 function superBall(trueOrFalse=true) {
     for(var i = 0; i<ballList.length; i++) {
-        ballList[i].superBall = trueOrFalse
+        if(ballList[i]) {
+            ballList[i].superBall = trueOrFalse
+        }
+    }
+}
+
+function threeBalls() {
+    let len = ballList.length // to prevent the infinite loop
+    for(var i=0; i<len; i++) {
+        if(ballList[i]&&!ballList[i].readyToGo) {
+            let leftBall = new Ball(ballList[i].coordinate.x, ballList[i].coordinate.y)
+            leftBall.go(ballList[i].angle+45, ballList[i].speed)
+            leftBall.readyToGo = false
+            
+            let rightBall = new Ball(ballList[i].coordinate.x, ballList[i].coordinate.y)
+            rightBall.go(ballList[i].angle-45, ballList[i].speed)
+            rightBall.readyToGo = false
+        }
     }
 }
 

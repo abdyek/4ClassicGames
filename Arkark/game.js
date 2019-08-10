@@ -9,11 +9,16 @@ canvas.height = 600
 let numberOfUnbrokenBlocks
 let numberOfBall
 let speedOfBall = 3
-let level = 1
+let level
 let score
 let multipleBlock = 0
+let numberOfLiveBall = 0
 let paused = false
 let buffer
+
+// mouse position
+let y
+let x
 
 // ball
 class Ball {
@@ -29,6 +34,13 @@ class Ball {
         this.brokenBlock = new Array()   // this list for will be broken block
         this.readyToGo = true
         this.superBall = false
+        this.isMain = false   // to control for main ball or secondary ball
+        this.buffer =  {
+            x: this.route.x,
+            y: this.route.y,
+            speed: this.speed
+        }
+        numberOfLiveBall++
     }
     addList() {
         ballList.push(this)
@@ -71,8 +83,14 @@ class Ball {
             multipleBlock = 0
             playSound("click")
         } else if (this.coordinate.y > 550) {
-            playSound("negative")
-            this.reset()
+            this.route.x = this.route.y = 0
+            this.coordinate.x = -10
+            this.coordinate.y = -10
+            numberOfLiveBall--
+            if(numberOfLiveBall==0) {
+                playSound("negative")
+                this.reset()
+            }
         }
 
 
@@ -93,6 +111,7 @@ class Ball {
             }
         }
 
+        try{
         // vertical block control
         if(this.route.y < 0) {  // go up
             if(mapGrid[this.blockIndex.x1][this.blockIndex.y1]) {
@@ -108,6 +127,12 @@ class Ball {
             if(mapGrid[this.blockIndex.x2][this.blockIndex.y2]) {
                 this.addBrokenBlock(this.blockIndex.x2, this.blockIndex.y2)
             }
+        }
+        } catch(err) {
+            console.log("ERROR! :( " + err)
+            // I have an error in this, this error message is:
+            // TypeError: Cannot read property game.js:132 '15' of undefined
+            // Maybe one day I will cope it
         }
         if(this.brokenBlock.length == 3) {       //     ## ##
             var degree = 135                     //      * ##    --> there are 3 blocks
@@ -213,15 +238,16 @@ class Ball {
     }
 
     reset() {
-        this.route.x = 0
-        this.route.y = 0
-        this.updatePositionOnMovableStick()
-        this.readyToGo = true
+        mainBall.updatePositionOnMovableStick()
+        mainBall.readyToGo = true
+        mainBall.stop()
         multipleBlock = 0
         numberOfBall--
+        numberOfLiveBall = 1
+        clearBallList()
+        
         // reset for new level and game
         movableStick.width = 75
-        clearBoxList()
         superBall(false)
         // ^ reset for new level and game
         controlForGameOver()
@@ -272,7 +298,7 @@ class Block {
     }
     tryYourChance() {
         let toBeOrNotToBe = Math.floor(Math.random() * 100)  // [0 - 99]
-        let which = Math.floor(Math.random()*6)         // [0 - 5]
+        let which = Math.floor(Math.random()*7)         // [0 - 6]
         let yesOrNo = Math.floor(Math.random()*2)  // [0 - 1]  for superBall
         let typeOfTheBox
         if(toBeOrNotToBe<30) {  // 30%
@@ -298,6 +324,9 @@ class Block {
                     if(yesOrNo==0) {
                         typeOfTheBox = superBall
                     }
+                break;
+                case 6:
+                    typeOfTheBox = threeBalls
                 break;
             } 
             new Box(this.index.x * 20 + 18, this.index.y * 11 + 15, typeOfTheBox)
@@ -336,12 +365,10 @@ function addToScore(point) {
 }
 
 function levelUp() {
-    playSound("levelUp")
     addToScore(100 * level + Math.pow(multipleBlock,2))
     level++
     numberOfBall++
     mainBall.reset()
-    mainBall.speed = 0
     if(levels[level]) {
         loadLevel(level)
     } else {
@@ -351,7 +378,6 @@ function levelUp() {
 }
 
 function play() {
-    numberOfUnbrokenBlocks = 0
     numberOfBall = 2
     level = 1
     score = 0
@@ -361,22 +387,21 @@ function play() {
 }
 
 function loadLevel(index) {
+    playSound("levelUp")
+    numberOfUnbrokenBlocks = 0
+    clearBoxList()
     clearMapGrid()
-    blockList = []
+    clearBlockList()
+    // to load for each block in the level
     for (var i = 0 ; i < levels[index].length; i++) {
         new Block(levels[index][i].xInd, levels[index][i].yInd, levels[index][i].color)
     }
 
 }
 
-function clearMapGrid() {
-    for (var i = 0 ; i < mapGrid.length; i++) {
-        for ( var j=0; j<mapGrid[i].length; j++) {
-            mapGrid[i][j] = null
-        }
-    }
+function clearBlockList() {
+    blockList = []
 }
-
 
 // default
 let topStick = new Stick(10, 10, 395, 10, "#638379") 
@@ -386,8 +411,6 @@ let rightStick = new Stick(395, 10, 395, 550, "#638379")
 let movableStick = new Stick((canvas.width - 75) / 2, 500, (canvas.width - 75) / 2 + 75, 500, "#e38c95")
 movableStick.width = movableStick.x2 - movableStick.x1
 
-let y
-let x
 function getCoor(e){
     if(!paused) {
         x=e.clientX
@@ -411,6 +434,7 @@ function getCoor(e){
 }
 
 let mainBall = new Ball(movableStick.x1 + (movableStick.width - 10) / 2, movableStick.y1 - 11) 
+mainBall.isMain = true
 
 // draw
 let drawMain
@@ -419,7 +443,9 @@ let drawBar
 // main
 function drawGame() {
     for(var i = 0; i<ballList.length; i++) {
-        ballList[i].draw()
+        if(ballList[i]) {
+            ballList[i].draw()
+        }
     }
 
     for(var i = 0; i<stickList.length; i++) {
@@ -486,18 +512,32 @@ function toClick() {
     } else if(drawBar==drawBoard && x > 370 + (window.innerWidth - canvas.width)/2 ) {
         // pause button
         if(!paused) {
-            buffer = {      // I will transport that buffer in mainBall class
+            for(var i = 0; i<ballList.length; i++) {
+                if(ballList[i]) {
+                    ballList[i].buffer.x = ballList[i].route.x
+                    ballList[i].buffer.y = ballList[i].route.y
+                    ballList[i].buffer.speed = ballList[i].speed
+                    ballList[i].stop()
+                }
+            }
+            /*
+            buffer = {      // I will transport that buffer in Ball class
                 x: mainBall.route.x,
                 y: mainBall.route.y,
                 speed: mainBall.speed
             }
             mainBall.stop()
+            */
             speedOfBoxes(0)
             paused = true
         } else {
-            mainBall.route.x = buffer.x
-            mainBall.route.y = buffer.y
-            mainBall.speed = buffer.speed
+            for(var i = 0; i<ballList.length; i++) {
+                if(ballList[i]) {
+                    ballList[i].route.x = ballList[i].buffer.x
+                    ballList[i].route.y = ballList[i].buffer.y
+                    ballList[i].speed = ballList[i].buffer.speed
+                }
+            }
             speedOfBoxes(1)
             paused = false
         }
