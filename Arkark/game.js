@@ -83,7 +83,7 @@ class Ball {
             multipleBlock = 0
             playSound("click")
         } else if (this.coordinate.y > 550) {
-            this.route.x = this.route.y = 0
+            this.route.x = this.route.y = this.speed = 0
             this.coordinate.x = -10
             this.coordinate.y = -10
             numberOfLiveBall--
@@ -299,9 +299,10 @@ class Block {
     tryYourChance() {
         let toBeOrNotToBe = Math.floor(Math.random() * 100)  // [0 - 99]
         let which = Math.floor(Math.random()*7)         // [0 - 6]
-        let yesOrNo = Math.floor(Math.random()*2)  // [0 - 1]  for superBall
+        let chanceforSuperBall = Math.floor(Math.random()*3)  // [0 - 2]  for superBall
+        let yesOrNoForThreeBalls = Math.floor(Math.random()*2)  // [0 - 1]  for threeBalls
         let typeOfTheBox
-        if(toBeOrNotToBe<30) {  // 30%
+        if(toBeOrNotToBe<15) {  // 15%
             switch(which) {
                 case 0:
                     typeOfTheBox = narrowMovableStick
@@ -321,12 +322,15 @@ class Block {
                 case 5:
                     // superBall is excellent so I want to be rare it :d
                     typeOfTheBox = killBall
-                    if(yesOrNo==0) {
+                    if(chanceforSuperBall==0) {
                         typeOfTheBox = superBall
                     }
                 break;
                 case 6:
-                    typeOfTheBox = threeBalls
+                    typeOfTheBox = killBall
+                    if(yesOrNoForThreeBalls==0) {
+                        typeOfTheBox = threeBalls
+                    }
                 break;
             } 
             new Box(this.index.x * 20 + 18, this.index.y * 11 + 15, typeOfTheBox)
@@ -482,7 +486,7 @@ function drawTheEnd() {
 // bar
 function drawBoard() {
     // level
-    drawText("Level "+level + " / 8", "#eee", "16px Noto Sans", 260, 580)
+    drawText("Level "+level + " / 12", "#eee", "16px Noto Sans", 260, 580)
 
     // number of ball
     drawCircle(165, 570, 5, "#c1cf94")
@@ -520,14 +524,6 @@ function toClick() {
                     ballList[i].stop()
                 }
             }
-            /*
-            buffer = {      // I will transport that buffer in Ball class
-                x: mainBall.route.x,
-                y: mainBall.route.y,
-                speed: mainBall.speed
-            }
-            mainBall.stop()
-            */
             speedOfBoxes(0)
             paused = true
         } else {

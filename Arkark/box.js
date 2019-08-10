@@ -104,7 +104,7 @@ function superBall(trueOrFalse=true) {
 function threeBalls() {
     let len = ballList.length // to prevent the infinite loop
     for(var i=0; i<len; i++) {
-        if(ballList[i]&&!ballList[i].readyToGo) {
+        if(ballList[i]&&ballList[i].speed) {
             let leftBall = new Ball(ballList[i].coordinate.x, ballList[i].coordinate.y)
             leftBall.go(ballList[i].angle+45, ballList[i].speed)
             leftBall.readyToGo = false
