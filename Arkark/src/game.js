@@ -280,8 +280,10 @@ class Block {
         blockList.push(this)
         this.index = {x:xInd, y:yInd}
         this.color = color
+        this.typeOfTheBox = null
         mapGrid[xInd][yInd] = this
         numberOfUnbrokenBlocks++
+        this.tryYourChance()
     }
     draw() {
         drawRectangle(13 + this.index.x*20, 13 + this.index.y*11, 19, 10, this.color)
@@ -293,48 +295,48 @@ class Block {
         numberOfUnbrokenBlocks--
         score += 10
         multipleBlock++
-        this.tryYourChance()
         controlForLevelUp()
+        if(this.typeOfTheBox) {
+            new Box(this.index.x * 20 + 18, this.index.y * 11 + 15, this.typeOfTheBox)
+        }
     }
     tryYourChance() {
         let toBeOrNotToBe = Math.floor(Math.random() * 100)  // [0 - 99]
         let which = Math.floor(Math.random()*7)         // [0 - 6]
         let chanceforSuperBall = Math.floor(Math.random()*3)  // [0 - 2]  for superBall
         let yesOrNoForThreeBalls = Math.floor(Math.random()*2)  // [0 - 1]  for threeBalls
-        let typeOfTheBox
         if(toBeOrNotToBe<15) {  // 15%
             switch(which) {
                 case 0:
-                    typeOfTheBox = narrowMovableStick
+                    this.typeOfTheBox = narrowMovableStick
                 break;
                 case 1:
-                    typeOfTheBox = expandMovableStick
+                    this.typeOfTheBox = expandMovableStick
                 break;
                 case 2:
-                    typeOfTheBox = speedUp
+                    this.typeOfTheBox = speedUp
                 break;
                 case 3:
-                    typeOfTheBox = speedDown
+                    this.typeOfTheBox = speedDown
                 break;
                 case 4:
-                    typeOfTheBox = killBall
+                    this.typeOfTheBox = killBall
                 break;
                 case 5:
                     // superBall is excellent so I want to be rare it :d
-                    typeOfTheBox = killBall
+                    this.typeOfTheBox = killBall
                     if(chanceforSuperBall==0) {
-                        typeOfTheBox = superBall
+                        this.typeOfTheBox = superBall
                     }
                 break;
                 case 6:
-                    typeOfTheBox = killBall
+                    this.typeOfTheBox = killBall
                     if(yesOrNoForThreeBalls==0) {
-                        typeOfTheBox = threeBalls
+                        this.typeOfTheBox = threeBalls
                     }
                 break;
             } 
-            new Box(this.index.x * 20 + 18, this.index.y * 11 + 15, typeOfTheBox)
-
+            
         }
     }
 }
