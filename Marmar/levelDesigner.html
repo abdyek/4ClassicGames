@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>LevelDesigner</title>
+    <link rel="stylesheet" href="css/levelDesigner.css">
+</head>
+<body onmousemove="getCoor(event)">
+    <div id="imagePicker"><img src="assets/images/sheet.png" width=816></div>
+    <div id="canvasWrapper">
+        <div id="verticalCellNum"></div>
+            <div id="scene">
+                <canvas id="canvas" onclick="fill()"></canvas>
+            </div>
+        <div id="horizontalCellNum"></div>
+    </div>
+    <div id="navigateButtons">
+        <div id="leftNavButton" onclick="previousColumn()"><</div>
+        <div id="rightNavButton" onclick="nextColumn()">></div>
+    </div>
+    <script src="src/main.js"></script>
+    <script src="src/tools/drawing.js"></script>
+    <script src="src/tools/levelDesigner.js"></script>
+    <script src="src/gameLoop.js"></script>
+</body>
+</html>

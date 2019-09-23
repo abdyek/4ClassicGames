@@ -7,24 +7,20 @@ let y
 let selectedIndex = 0
 let optionsWrapper = document.createElement("div")
 
-function startLevelDesign() {
-    document.body.setAttribute("onmousemove", "getCoor(event)")
-    canvas.setAttribute("onclick", "fill()")
-    canvas.setAttribute("style", "float:right;")
+let verticalCellNum = document.getElementById("verticalCellNum")
+let horizontalCellNum = document.getElementById("horizontalCellNum")
 
-    // 
-    addImagePicker()
+addImagePicker()
+addCellsNumber()
 
-    //onmousemove="getCoor(event)"
-    draw = function() {
-        // horizontal
-        for (var i = 1; i < 14; i++) {
-            drawStick(0, 0+i*48, canvas.width, 0+i*48, 3, "#acacac")
-        }
-        // vertical
-        for (var i = 1; i< 25; i++) {
-            drawStick(0+i*48, 0, 0+i*48, canvas.height, 3, "#acacac")
-        }
+function draw() {
+    // horizontal
+    for (var i = 1; i < 14; i++) {
+        drawStick(0, 0+i*48, canvas.width, 0+i*48, 3, "#acacac")
+    }
+    // vertical
+    for (var i = 1; i< 25; i++) {
+        drawStick(0+i*48, 0, 0+i*48, canvas.height, 3, "#acacac")
     }
 }
 
@@ -34,19 +30,12 @@ function getCoor(e) {
 }
 
 function fill() {
-    let colIndex = parseInt((x - (window.innerWidth - canvas.width)) / 48)  // 48 is height/width of the cell
+    let colIndex = parseInt((x - (window.innerWidth - 1200)) / 48) + parseInt(horizontalCellNum.children[0].innerText) // 48 is height/width of the cell
     let rowIndex = parseInt(y / 48)
     console.log(colIndex + ", "+ rowIndex)
-    //console.log(x + ", "+ y)
 }
 
 function addImagePicker() {
-    let picker = document.createElement("div")
-    picker.setAttribute("id", "imagePicker")
-
-    // sheet in drawing.js
-    sheet.setAttribute("width", "816")
-    picker.appendChild(sheet)
 
     optionsWrapper.setAttribute("id", "optionsWrapper")
     
@@ -54,8 +43,9 @@ function addImagePicker() {
         optionsWrapper.appendChild(addOption(i))
     }
 
-    picker.appendChild(optionsWrapper)
-    document.body.appendChild(picker)
+    let imagePicker = document.getElementById("imagePicker")
+    imagePicker.appendChild(optionsWrapper)
+    document.body.appendChild(imagePicker)
 }
 
 function addOption(index) {
@@ -66,8 +56,41 @@ function addOption(index) {
 }
 
 function selectImage(index) {
-    console.log("seçilen image " + index)
+    console.log("selected image " + index)
     optionsWrapper.children[selectedIndex].setAttribute("id", "")
     optionsWrapper.children[index].setAttribute("id", "selected")
     selectedIndex = index
+}
+
+function addCellsNumber() {
+    // vertical
+    for (var i = 0; i<14; i++) {
+        let number = document.createElement("div")
+        number.setAttribute("class", "cellNumber cn-vertical")
+        number.innerText = i
+        verticalCellNum.appendChild(number)
+    }
+    // horizontal
+    for ( var i = 0; i<25; i++) {
+        let number = document.createElement("div")
+        number.setAttribute("class", "cellNumber cn-horizontal")
+        number.innerText = i
+        horizontalCellNum.appendChild(number)
+    }
+}
+
+function previousColumn() {
+    if(horizontalCellNum.children[0].innerText != "0") {
+        canvas.width -= 48;
+        for (var i = 0; i<25; i++) {
+            horizontalCellNum.children[i].innerText = parseInt(horizontalCellNum.children[i].innerText) - 1
+        }
+    }
+}
+
+function nextColumn() {
+    canvas.width += 48;
+    for (var i = 0; i<25; i++) {
+        horizontalCellNum.children[i].innerText = parseInt(horizontalCellNum.children[i].innerText) + 1
+    }
 }
