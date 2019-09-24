@@ -10,8 +10,18 @@ let optionsWrapper = document.createElement("div")
 let verticalCellNum = document.getElementById("verticalCellNum")
 let horizontalCellNum = document.getElementById("horizontalCellNum")
 
+let firstHorizontalCellNum
+let lastHorizontalCellNum
+
+let grid = new Array(25)
+for (var i = 0; i<25; i++) {
+    grid[i] = new Array(14)
+}
+
 addImagePicker()
 addCellsNumber()
+
+updateHorizontalCellNum()
 
 function draw() {
     // horizontal
@@ -21,6 +31,14 @@ function draw() {
     // vertical
     for (var i = 1; i< 25; i++) {
         drawStick(0+i*48, 0, 0+i*48, canvas.height, 3, "#acacac")
+    }
+    drawCell(0,0, 7,0)  // örnek
+    for (var i = firstHorizontalCellNum; i<=lastHorizontalCellNum; i++) {
+        for (var j = 0; j<14; j++) {
+            if(grid[i][j]) {
+                drawCell(i-firstHorizontalCellNum, j, grid[i][j].imgX, grid[i][j].imgY)
+            }
+        }
     }
 }
 
@@ -32,6 +50,8 @@ function getCoor(e) {
 function fill() {
     let colIndex = parseInt((x - (window.innerWidth - 1200)) / 48) + parseInt(horizontalCellNum.children[0].innerText) // 48 is height/width of the cell
     let rowIndex = parseInt(y / 48)
+    grid[colIndex][rowIndex] = {imgX: selectedIndex % 17 , imgY: parseInt(selectedIndex / 17)}
+
     console.log(colIndex + ", "+ rowIndex)
 }
 
@@ -86,6 +106,7 @@ function previousColumn() {
             horizontalCellNum.children[i].innerText = parseInt(horizontalCellNum.children[i].innerText) - 1
         }
     }
+    updateHorizontalCellNum()
 }
 
 function nextColumn() {
@@ -93,4 +114,14 @@ function nextColumn() {
     for (var i = 0; i<25; i++) {
         horizontalCellNum.children[i].innerText = parseInt(horizontalCellNum.children[i].innerText) + 1
     }
+    updateHorizontalCellNum()
+    if(lastHorizontalCellNum>=grid.length) {
+    // I need to new column
+        grid[lastHorizontalCellNum] = new Array(14)
+    }
+}
+
+function updateHorizontalCellNum() {
+    firstHorizontalCellNum = parseInt(horizontalCellNum.children[0].innerText)
+    lastHorizontalCellNum = firstHorizontalCellNum + 24
 }

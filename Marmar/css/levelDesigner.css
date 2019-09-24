@@ -1,5 +1,7 @@
 body {
     margin:0;
+    user-select: none;
+    overflow:hidden;
 }
 
 #canvas {
@@ -86,7 +88,6 @@ body {
     text-align: center;
     font-size:40px;
     color:#333;
-    user-select: none;
 }
 
 #navigateButtons div:hover {
