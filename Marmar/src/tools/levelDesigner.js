@@ -8,15 +8,20 @@ let selectedIndex = 0
 let optionsWrapper = document.createElement("div")
 
 let verticalCellNum = document.getElementById("verticalCellNum")
-let horizontalCellNum = document.getElementById("horizontalCellNum")
+let horizontalCellNum = document.getElementById("horizontalCellNum") 
+let hitboxSwitch = document.getElementById("hitboxSwitch")
 
 let firstHorizontalCellNum
 let lastHorizontalCellNum
+
+let transparent = false
 
 let grid = new Array(25)
 for (var i = 0; i<25; i++) {
     grid[i] = new Array(14)
 }
+
+hitboxSwitch.children[0].checked = false
 
 addImagePicker()
 addCellsNumber()
@@ -32,13 +37,26 @@ function draw() {
     for (var i = 1; i< 25; i++) {
         drawStick(0+i*48, 0, 0+i*48, canvas.height, 3, "#acacac")
     }
-    drawCell(0,0, 7,0)  // örnek
     for (var i = firstHorizontalCellNum; i<=lastHorizontalCellNum; i++) {
         for (var j = 0; j<14; j++) {
             if(grid[i][j]) {
                 drawCell(i-firstHorizontalCellNum, j, grid[i][j].imgX, grid[i][j].imgY)
             }
         }
+    }
+    // opacity for show hitbox
+    if(transparent) {
+        context.globalAlpha = 0.5 
+    } else {
+        context.globalAlpha = 1
+    }
+}
+
+function hitboxSwitcher() {
+    if(hitboxSwitch.children[0].checked) {
+        transparent = true
+    } else {
+        transparent = false
     }
 }
 
@@ -132,3 +150,4 @@ function updateHorizontalCellNum() {
     firstHorizontalCellNum = parseInt(horizontalCellNum.children[0].innerText)
     lastHorizontalCellNum = firstHorizontalCellNum + 24
 }
+

@@ -76,8 +76,7 @@ body {
 }
 
 #navigateButtons{
-    clear:both;
-    float:right;
+    float:left;
     width:240px;
 }
 
@@ -92,4 +91,16 @@ body {
 
 #navigateButtons div:hover {
     background-color: #99F;
+}
+
+#tools {
+    font-size: 18px;
+    clear:both;
+    float: right;
+}
+
+#hitboxSwitch {
+    float:left;
+    height: 120px;
+    line-height: 120px;
 }
