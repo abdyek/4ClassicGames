@@ -50,7 +50,14 @@ function getCoor(e) {
 function fill() {
     let colIndex = parseInt((x - (window.innerWidth - 1200)) / 48) + parseInt(horizontalCellNum.children[0].innerText) // 48 is height/width of the cell
     let rowIndex = parseInt(y / 48)
-    grid[colIndex][rowIndex] = {imgX: selectedIndex % 17 , imgY: parseInt(selectedIndex / 17)}
+    let imgX = selectedIndex % 17
+    let imgY = parseInt(selectedIndex / 17)
+    if(grid[colIndex][rowIndex] && grid[colIndex][rowIndex].imgX == imgX && grid[colIndex][rowIndex].imgY == imgY) {
+        // to delete
+        grid[colIndex][rowIndex] = undefined
+    } else {
+        grid[colIndex][rowIndex] = {imgX: imgX, imgY: imgY}
+    }
 
     console.log(colIndex + ", "+ rowIndex)
 }
