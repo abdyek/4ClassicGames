@@ -111,28 +111,23 @@ class Ball {
             }
         }
 
-        try{
-        // vertical block control
-        if(this.route.y < 0) {  // go up
-            if(mapGrid[this.blockIndex.x1][this.blockIndex.y1]) {
-                this.addBrokenBlock(this.blockIndex.x1, this.blockIndex.y1)
+        if(mapGrid[this.blockIndex.x1]) {
+            // vertical block control
+            if(this.route.y < 0) {  // go up
+                if(mapGrid[this.blockIndex.x1][this.blockIndex.y1]) {
+                    this.addBrokenBlock(this.blockIndex.x1, this.blockIndex.y1)
+                }
+                if(mapGrid[this.blockIndex.x2][this.blockIndex.y1]) {
+                    this.addBrokenBlock(this.blockIndex.x2, this.blockIndex.y1)
+                }
+            } else if (this.route.y > 0) {  // go down
+                if(mapGrid[this.blockIndex.x1][this.blockIndex.y2]) {
+                    this.addBrokenBlock(this.blockIndex.x1, this.blockIndex.y2)
+                }
+                if(mapGrid[this.blockIndex.x2][this.blockIndex.y2]) {
+                    this.addBrokenBlock(this.blockIndex.x2, this.blockIndex.y2)
+                }
             }
-            if(mapGrid[this.blockIndex.x2][this.blockIndex.y1]) {
-                this.addBrokenBlock(this.blockIndex.x2, this.blockIndex.y1)
-            }
-        } else if (this.route.y > 0) {  // go down
-            if(mapGrid[this.blockIndex.x1][this.blockIndex.y2]) {
-                this.addBrokenBlock(this.blockIndex.x1, this.blockIndex.y2)
-            }
-            if(mapGrid[this.blockIndex.x2][this.blockIndex.y2]) {
-                this.addBrokenBlock(this.blockIndex.x2, this.blockIndex.y2)
-            }
-        }
-        } catch(err) {
-            console.log("ERROR! :( " + err)
-            // I have an error in this, this error message is:
-            // TypeError: Cannot read property game.js:132 '15' of undefined
-            // Maybe one day I will cope it
         }
         if(this.brokenBlock.length == 3) {       //     ## ##
             var degree = 135                     //      * ##    --> there are 3 blocks
