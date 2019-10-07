@@ -40,7 +40,12 @@ function draw() {
     for (var i = firstHorizontalCellNum; i<=lastHorizontalCellNum; i++) {
         for (var j = 0; j<14; j++) {
             if(grid[i][j]) {
+                // drawing image
                 drawCell(i-firstHorizontalCellNum, j, grid[i][j].imgX, grid[i][j].imgY)
+                // drawing hitboxes
+                if(transparent && grid[i][j].hitbox) {
+                    drawRectangle(48*i-firstHorizontalCellNum*48, 48*j, 48, 48, "green");
+                }
             }
         }
     }
@@ -74,7 +79,7 @@ function fill() {
         // to delete
         grid[colIndex][rowIndex] = undefined
     } else {
-        grid[colIndex][rowIndex] = {imgX: imgX, imgY: imgY}
+        grid[colIndex][rowIndex] = {imgX: imgX, imgY: imgY, hitbox: hasItHitbox(imgX, imgY)}
     }
 
     console.log(colIndex + ", "+ rowIndex)
@@ -149,5 +154,17 @@ function nextColumn() {
 function updateHorizontalCellNum() {
     firstHorizontalCellNum = parseInt(horizontalCellNum.children[0].innerText)
     lastHorizontalCellNum = firstHorizontalCellNum + 24
+}
+
+function hasItHitbox(imgX, imgY) {
+    if(7 <= imgX && imgX <= 13 && 0 <= imgY && imgY <= 3) {
+        // imgX:11 , imgY:3 is exceptional so this doesn't have hitbox
+        if(imgX == 11 && imgY == 3) {
+            return false
+        } else {
+            return true
+        }
+    }
+    return false
 }
 
