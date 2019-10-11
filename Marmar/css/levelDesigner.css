@@ -104,3 +104,7 @@ body {
     height: 120px;
     line-height: 120px;
 }
+
+#toCopy {
+    display: hidden;
+}

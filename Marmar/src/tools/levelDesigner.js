@@ -15,6 +15,10 @@ let firstHorizontalCellNum
 let lastHorizontalCellNum
 
 let transparent = false
+let mapsJsContent = "maps = {\n\t1: {\n\tlevel:1,\n\t\tgrid : {"
+
+let toCopy = document.getElementById("toCopy")
+let mapsText = new Array() // I will save text of all map to save it
 
 let grid = new Array(25)
 for (var i = 0; i<25; i++) {
@@ -168,3 +172,46 @@ function hasItHitbox(imgX, imgY) {
     return false
 }
 
+function loadMap(levelNum) {
+    if(maps[levelNum]) {
+        for (var i = 0; i<20; i++) {  // şimdilik 30 dedim sonra onu map'ten çekcem
+            for(var j = 0; j<14; j++) {
+                if(maps[levelNum].grid[i] && maps[levelNum].grid[i][j]) {
+                    grid[i][j] = maps[levelNum].grid[i][j]
+                }
+            }
+        }
+    } else {
+        return undefined
+    }
+}
+
+function saveMaps() {   
+    let written = false     //  example -> 3 : {
+    for (var i = 0; i<20; i++) {  // şimdilik 30 dedim sonra onu map'ten çekcem
+        if(grid[i]) {
+            for(var j = 0; j<14; j++) {
+                if(grid[i] && grid[i][j]) {
+                    if(!written) {
+                        mapsJsContent += "\n\t\t\t" + i + ": {"
+                        written = true
+                    }
+                    //grid[i][j] = maps[levelNum].grid[i][j]
+                    mapsJsContent += "\n\t\t\t\t" + j + ": {imgX:" + grid[i][j].imgX + ", imgY:" + grid[i][j].imgY + ", hitbox:" + grid[i][j].hitbox + "},"
+                }
+            }
+            if(written) {
+                mapsJsContent += "\n\t\t\t},"
+            }
+            written = false
+        }
+    }
+    mapsJsContent += "\n\t\t}\n\t}\n}"
+    toCopy.value = mapsJsContent
+    copyText()
+}
+
+function copyText() {
+    toCopy.select()
+    document.execCommand("copy")
+}
