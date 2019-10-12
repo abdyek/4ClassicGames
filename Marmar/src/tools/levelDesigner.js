@@ -27,7 +27,7 @@ for (var i = 0; i<25; i++) {
     grid[i] = new Array(14)
 }
 
-hitboxSwitch.children[0].checked = false
+hitboxSwitch.children[1].checked = false
 
 addImagePicker()
 addCellsNumber()
@@ -178,8 +178,12 @@ function hasItHitbox(imgX, imgY) {
 }
 
 function loadMap(levelNum) {
+    clearGrid()
+    let keysArr = Object.keys(maps[levelNum].grid)
+    let last = keysArr[keysArr.length-1]
+    expandGrid(last)
     if(maps[levelNum]) {
-        for (var i = 0; i<20; i++) {  // şimdilik 30 dedim sonra onu map'ten çekcem
+        for (var i = 0; i<=last; i++) {   // max column is 1000 now maybe I can change it
             for(var j = 0; j<14; j++) {
                 if(maps[levelNum].grid[i] && maps[levelNum].grid[i][j]) {
                     grid[i][j] = maps[levelNum].grid[i][j]
@@ -192,10 +196,9 @@ function loadMap(levelNum) {
 }
 
 function saveMaps() {   
-    mapsJsContent =  "maps = {\n\t1: {\n\tlevel:1,\n\t\tgrid : {"
+    mapsJsContent =  "maps = {\n\t1: {\n\t\tlevel:1,\n\t\tgrid : {"
     let written = false     //  example -> 3 : {
-    for (var i = 0; i<30; i++) {  // şimdilik 30 dedim sonra onu map'ten çekcem
-    //for (const columb of Object.values(grid)) { } // I will change up line 
+    for (var i = 0; i<grid.length; i++) {
         if(grid[i]) {
             for(var j = 0; j<14; j++) {
                 if(grid[i] && grid[i][j]) {
@@ -226,19 +229,26 @@ function copyText() {
     saveMapsButton.innerText = "Copied"
 }
 
-/*
+function expandGrid(maxColumn) {
+    if(maxColumn>grid.length) {
+        for (var i=grid.length;i<=maxColumn; i++) {
+            grid[i] = new Array(14)
+        }
+    }
+}
+
 function clearGrid() {
-    for (var i = 0; i<20; i++) {
+    for (var i = 0; i<grid.length; i++) {
         for(var j = 0; j<14; j++) {
-            if(maps[levelNum].grid[i] && maps[levelNum].grid[i][j]) {
-                grid[i][j] = undefined
-            }
+            grid[i][j] = undefined
         }
     }    
-} // for next commit
-*/ 
+}
+
 
 // to load map 1
 if(maps[1]) {
     loadMap(1)
 }
+// selectImage
+selectImage(0)

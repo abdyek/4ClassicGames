@@ -104,7 +104,10 @@ body {
 }
 
 #toCopy {
-    display: hidden;
+    display: block;
+    position: absolute;
+    bottom:-500px; /* to hide and copy function*/
+    
 }
 
 .navButton {
