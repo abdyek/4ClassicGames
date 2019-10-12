@@ -15,10 +15,12 @@ let firstHorizontalCellNum
 let lastHorizontalCellNum
 
 let transparent = false
-let mapsJsContent = "maps = {\n\t1: {\n\tlevel:1,\n\t\tgrid : {"
+let mapsJsContent = ""
+let savedGrid = false
 
 let toCopy = document.getElementById("toCopy")
 let mapsText = new Array() // I will save text of all map to save it
+let saveMapsButton = document.getElementById("saveMapsButton")
 
 let grid = new Array(25)
 for (var i = 0; i<25; i++) {
@@ -62,7 +64,7 @@ function draw() {
 }
 
 function hitboxSwitcher() {
-    if(hitboxSwitch.children[0].checked) {
+    if(hitboxSwitch.children[1].checked) {
         transparent = true
     } else {
         transparent = false
@@ -85,7 +87,10 @@ function fill() {
     } else {
         grid[colIndex][rowIndex] = {imgX: imgX, imgY: imgY, hitbox: hasItHitbox(imgX, imgY)}
     }
-
+    if(savedGrid) {
+        saveMapsButton.innerText = "Copy to clipboard"
+        savedGrid = false
+    }
     console.log(colIndex + ", "+ rowIndex)
 }
 
@@ -187,8 +192,10 @@ function loadMap(levelNum) {
 }
 
 function saveMaps() {   
+    mapsJsContent =  "maps = {\n\t1: {\n\tlevel:1,\n\t\tgrid : {"
     let written = false     //  example -> 3 : {
-    for (var i = 0; i<20; i++) {  // şimdilik 30 dedim sonra onu map'ten çekcem
+    for (var i = 0; i<30; i++) {  // şimdilik 30 dedim sonra onu map'ten çekcem
+    //for (const columb of Object.values(grid)) { } // I will change up line 
         if(grid[i]) {
             for(var j = 0; j<14; j++) {
                 if(grid[i] && grid[i][j]) {
@@ -209,9 +216,29 @@ function saveMaps() {
     mapsJsContent += "\n\t\t}\n\t}\n}"
     toCopy.value = mapsJsContent
     copyText()
+    savedGrid = true
+    mapsJsContent = ""
 }
 
 function copyText() {
     toCopy.select()
     document.execCommand("copy")
+    saveMapsButton.innerText = "Copied"
+}
+
+/*
+function clearGrid() {
+    for (var i = 0; i<20; i++) {
+        for(var j = 0; j<14; j++) {
+            if(maps[levelNum].grid[i] && maps[levelNum].grid[i][j]) {
+                grid[i][j] = undefined
+            }
+        }
+    }    
+} // for next commit
+*/ 
+
+// to load map 1
+if(maps[1]) {
+    loadMap(1)
 }

@@ -80,31 +80,74 @@ body {
     width:240px;
 }
 
-#navigateButtons div {
-    float:left;
-    width: 120px;
-    line-height: 120px;
-    text-align: center;
-    font-size:40px;
-    color:#333;
-}
-
-#navigateButtons div:hover {
-    background-color: #99F;
-}
 
 #tools {
+    margin-top:15px;
     font-size: 18px;
     clear:both;
     float: right;
 }
 
+.tool-title {
+    text-align: center;
+    font-size: 24px;
+    color:grey;
+}
+
 #hitboxSwitch {
     float:left;
     height: 120px;
-    line-height: 120px;
+}
+
+#hitboxSwitch div {
+    float:right;
 }
 
 #toCopy {
     display: hidden;
+}
+
+.navButton {
+    font-size:40px;
+    width: 120px;
+    line-height: 120px;
+    text-align:center;
+    float:left;
+    color:#333;
+}
+.navButton:hover {
+    background-color: #99F;
+}
+
+#maps {
+    float:left;
+}
+
+#map {
+    float:left;
+    width:120px;
+    line-height: 120px;
+    text-align: center;
+    color:#333;
+}
+
+#map select {
+    font-size:30px;
+}
+
+#saveMapsButton {
+    line-height: 40px;
+    width: 200px;
+    text-align: center;
+    float:left;
+    font-size: 23px;
+    border-radius: 10px;
+    padding: 20px;
+    margin: 20px;
+    background-color: #007bff;
+    color:#eee;
+}
+
+#saveMapsButton:hover {
+    background-color: #005bff;
 }

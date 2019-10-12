@@ -15,13 +15,26 @@
         <div id="horizontalCellNum"></div>
     </div>
     <div id="tools">
-        <div id="hitboxSwitch" onclick="hitboxSwitcher()"><input type="checkbox">Show Hitboxes</div>
+        <div id="saveMapsButton" onclick="saveMaps()">
+            Copy to clipboard
+        </div>
+        <div id="hitboxSwitch" onclick="hitboxSwitcher()">
+            <div class="tool-title">show hitboxes</div>
+            <input type="checkbox">
+        </div>
+        <div id="maps">
+            <div class="tool-title">map</div>
+            <div id="leftMapButton" class="navButton"><</div>
+            <div id="map"> <select name="" id=""><option value="">1</option></select></div> <!-- now only 1 map-->
+            <div id="rightMapButton" class="navButton">+</div>  <!-- + or > -->
+        </div>
         <div id="navigateButtons">
-            <div id="leftNavButton" onclick="previousColumn()"><</div>
-            <div id="rightNavButton" onclick="nextColumn()">></div>
+            <div class="tool-title">column</div>
+            <div id="leftNavButton" class="navButton" onclick="previousColumn()"><</div>
+            <div id="rightNavButton" class="navButton" onclick="nextColumn()">></div>
         </div>
     </div>
-    <input type="text" id="toCopy" >
+    <textarea type="text" id="toCopy" > </textarea>
     <script src="src/main.js"></script>
     <script src="src/tools/drawing.js"></script>
     <script src="src/maps.js"></script>
