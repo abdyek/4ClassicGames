@@ -23,6 +23,7 @@ let nextMapButton = document.getElementById("nextMapButton")
 let toCopy = document.getElementById("toCopy")
 let mapsBuffer = new Array() // I will save text of all map
 let saveMapsButton = document.getElementById("saveMapsButton")
+let lastOpenedMap
 
 let grid = new Array(25)
 for (var i = 0; i<25; i++) {
@@ -93,7 +94,7 @@ function fill() {
         saveMapsButton.innerText = "Copy to clipboard"
         savedGrid = false
     }
-    console.log(colIndex + ", "+ rowIndex)
+    //console.log(colIndex + ", " + rowIndex)
 }
 
 function addImagePicker() {
@@ -165,6 +166,8 @@ function nextColumn() {
 function previousMap() {
     if(mapSelectOption.selectedIndex!=0)  {
         mapSelectOption.selectedIndex--
+        saveMap(lastOpenedMap)
+        loadMap(mapSelectOption.selectedOptions[0].innerText)
         selectMap()
     }
 }
@@ -172,6 +175,10 @@ function previousMap() {
 function nextMap() {
     if(mapSelectOption.selectedIndex + 1 != mapSelectOption.children.length) {
         mapSelectOption.selectedIndex++
+        saveMap(lastOpenedMap)
+        loadMap(mapSelectOption.selectedOptions[0].innerText)
+        loadMap(mapSelectOption.selectedOptions[0].innerText)
+        selectMap()
     } else {
         newMap()
     }
@@ -181,13 +188,19 @@ function nextMap() {
 
 function newMap() {
     let newOption = document.createElement("option")
-    newOption.innerHTML = mapSelectOption.length + 1
+    mapNum = newOption.innerHTML = mapSelectOption.length + 1
     mapSelectOption.appendChild(newOption)
     mapSelectOption.selectedIndex = mapSelectOption.length - 1
+    maps[mapNum] = new Object()
+    maps[mapNum]["grid"] = new Object()
+    saveMap(lastOpenedMap)
+    loadMap(mapNum)
 }
 
 function selectMap() {
     // to select map
+    saveMap(lastOpenedMap)
+    loadMap(mapSelectOption.selectedOptions[0].innerText)
     checkNextMapIcon()
 }
 
@@ -217,31 +230,29 @@ function hasItHitbox(imgX, imgY) {
 }
 
 function loadMap(levelNum) {
+    lastOpenedMap = levelNum
     clearGrid()
     let keysArr = Object.keys(maps[levelNum].grid)
     let last = keysArr[keysArr.length-1]
     expandGrid(last)
-    if(maps[levelNum]) {
-        for (var i = 0; i<=last; i++) {
-            for(var j = 0; j<14; j++) {
-                if(maps[levelNum].grid[i] && maps[levelNum].grid[i][j]) {
-                    grid[i][j] = maps[levelNum].grid[i][j]
-                }
+    for (var i = 0; i <= last; i++) {
+        for (var j = 0; j < 14; j++) {
+            if (maps[levelNum].grid[i] && maps[levelNum].grid[i][j]) {
+                grid[i][j] = maps[levelNum].grid[i][j]
             }
         }
-    } else {
-        return undefined
     }
+    return undefined
 }
 
-function saveMaps() {   
-    mapsJsContent =  "maps = {\n\t1: {\n\t\tlevel:1,\n\t\tgrid : {"
+function saveMaps() {
+    mapsJsContent = "maps = {\n\t1: {\n\t\tlevel:1,\n\t\tgrid : {"
     let written = false     //  example -> 3 : {
-    for (var i = 0; i<grid.length; i++) {
-        if(grid[i]) {
-            for(var j = 0; j<14; j++) {
-                if(grid[i] && grid[i][j]) {
-                    if(!written) {
+    for (var i = 0; i < grid.length; i++) {
+        if (grid[i]) {
+            for (var j = 0; j < 14; j++) {
+                if (grid[i] && grid[i][j]) {
+                    if (!written) {
                         mapsJsContent += "\n\t\t\t" + i + ": {"
                         written = true
                     }
@@ -249,7 +260,7 @@ function saveMaps() {
                     mapsJsContent += "\n\t\t\t\t" + j + ": {imgX:" + grid[i][j].imgX + ", imgY:" + grid[i][j].imgY + ", hitbox:" + grid[i][j].hitbox + "},"
                 }
             }
-            if(written) {
+            if (written) {
                 mapsJsContent += "\n\t\t\t},"
             }
             written = false
@@ -263,7 +274,16 @@ function saveMaps() {
 }
 
 function saveMap(mapNum) {
-    maps[mapNum] = new Object()
+    for (var i = 0; i <= grid.length; i++) {
+        for (var j = 0; j < 14; j++) {
+            if (grid[i] && grid[i][j]) {
+                if(!maps[mapNum].grid[i]) {
+                    maps[mapNum].grid[i] = new Array(14)
+                }
+                maps[mapNum].grid[i][j] = grid[i][j]
+            }
+        }
+    }
 }
 
 function copyText() {
