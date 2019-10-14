@@ -17,9 +17,11 @@ let lastHorizontalCellNum
 let transparent = false
 let mapsJsContent = ""
 let savedGrid = false
+let mapSelectOption = document.getElementById("mapSelectOption")
+let nextMapButton = document.getElementById("nextMapButton")
 
 let toCopy = document.getElementById("toCopy")
-let mapsText = new Array() // I will save text of all map to save it
+let mapsBuffer = new Array() // I will save text of all map
 let saveMapsButton = document.getElementById("saveMapsButton")
 
 let grid = new Array(25)
@@ -160,6 +162,43 @@ function nextColumn() {
     }
 }
 
+function previousMap() {
+    if(mapSelectOption.selectedIndex!=0)  {
+        mapSelectOption.selectedIndex--
+        selectMap()
+    }
+}
+
+function nextMap() {
+    if(mapSelectOption.selectedIndex + 1 != mapSelectOption.children.length) {
+        mapSelectOption.selectedIndex++
+    } else {
+        newMap()
+    }
+    selectMap()
+    //checkNextMapIcon()
+}
+
+function newMap() {
+    let newOption = document.createElement("option")
+    newOption.innerHTML = mapSelectOption.length + 1
+    mapSelectOption.appendChild(newOption)
+    mapSelectOption.selectedIndex = mapSelectOption.length - 1
+}
+
+function selectMap() {
+    // to select map
+    checkNextMapIcon()
+}
+
+function checkNextMapIcon() {
+    if(mapSelectOption.selectedIndex+1 == mapSelectOption.length) {
+        nextMapButton.innerHTML = "+"
+    } else {
+        nextMapButton.innerHTML = ">"
+    }
+}
+
 function updateHorizontalCellNum() {
     firstHorizontalCellNum = parseInt(horizontalCellNum.children[0].innerText)
     lastHorizontalCellNum = firstHorizontalCellNum + 24
@@ -183,7 +222,7 @@ function loadMap(levelNum) {
     let last = keysArr[keysArr.length-1]
     expandGrid(last)
     if(maps[levelNum]) {
-        for (var i = 0; i<=last; i++) {   // max column is 1000 now maybe I can change it
+        for (var i = 0; i<=last; i++) {
             for(var j = 0; j<14; j++) {
                 if(maps[levelNum].grid[i] && maps[levelNum].grid[i][j]) {
                     grid[i][j] = maps[levelNum].grid[i][j]
@@ -216,11 +255,15 @@ function saveMaps() {
             written = false
         }
     }
-    mapsJsContent += "\n\t\t}\n\t}\n}"
+    mapsJsContent += "\n\t\t},\n\t}\n}"
     toCopy.value = mapsJsContent
     copyText()
     savedGrid = true
     mapsJsContent = ""
+}
+
+function saveMap(mapNum) {
+    maps[mapNum] = new Object()
 }
 
 function copyText() {
@@ -249,6 +292,9 @@ function clearGrid() {
 // to load map 1
 if(maps[1]) {
     loadMap(1)
+    mapSelectOption.selectedIndex = 0
 }
 // selectImage
 selectImage(0)
+// check icon
+checkNextMapIcon()

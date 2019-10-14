@@ -24,9 +24,13 @@
         </div>
         <div id="maps">
             <div class="tool-title">map</div>
-            <div id="leftMapButton" class="navButton"><</div>
-            <div id="map"> <select name="" id=""><option value="">1</option></select></div> <!-- now only 1 map-->
-            <div id="rightMapButton" class="navButton">+</div>  <!-- + or > -->
+            <div id="leftMapButton" class="navButton" onclick="previousMap()"><</div>
+            <div id="map">
+                <select name="" id="mapSelectOption" onchange="selectMap()">
+                    <option value="">1</option>
+                </select>
+            </div> <!-- now only 1 map-->
+            <div id="nextMapButton" class="navButton" onclick="nextMap()">></div>  <!-- + or > -->
         </div>
         <div id="navigateButtons">
             <div class="tool-title">column</div>
