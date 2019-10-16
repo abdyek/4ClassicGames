@@ -280,7 +280,7 @@ function copyToClipboard() {
 function saveMap(mapNum) {
     for (var i = 0; i <= grid.length; i++) {
         for (var j = 0; j < 14; j++) {
-            if (grid[i] && grid[i][j]) {
+            if (grid[i]) {
                 if(!maps[mapNum].grid[i]) {
                     maps[mapNum].grid[i] = new Array(14)
                 }
