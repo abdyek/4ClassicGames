@@ -138,7 +138,7 @@ body {
     font-size:30px;
 }
 
-#saveMapsButton {
+#copyToClipboard {
     line-height: 40px;
     width: 200px;
     text-align: center;
@@ -151,6 +151,6 @@ body {
     color:#eee;
 }
 
-#saveMapsButton:hover {
+#copyToClipboard:hover {
     background-color: #005bff;
 }

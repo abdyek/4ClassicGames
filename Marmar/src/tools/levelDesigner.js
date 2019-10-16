@@ -15,14 +15,13 @@ let firstHorizontalCellNum
 let lastHorizontalCellNum
 
 let transparent = false
-let mapsJsContent = ""
+let mapsJsContent = "maps = {"
 let savedGrid = false
 let mapSelectOption = document.getElementById("mapSelectOption")
 let nextMapButton = document.getElementById("nextMapButton")
 
 let toCopy = document.getElementById("toCopy")
-let mapsBuffer = new Array() // I will save text of all map
-let saveMapsButton = document.getElementById("saveMapsButton")
+let copyToClipboardButton = document.getElementById("copyToClipboard")
 let lastOpenedMap
 
 let grid = new Array(25)
@@ -91,7 +90,7 @@ function fill() {
         grid[colIndex][rowIndex] = {imgX: imgX, imgY: imgY, hitbox: hasItHitbox(imgX, imgY)}
     }
     if(savedGrid) {
-        saveMapsButton.innerText = "Copy to clipboard"
+        copyToClipboardButton.innerText = "Copy to clipboard"
         savedGrid = false
     }
     //console.log(colIndex + ", " + rowIndex)
@@ -245,32 +244,37 @@ function loadMap(levelNum) {
     return undefined
 }
 
-function saveMaps() {
-    mapsJsContent = "maps = {\n\t1: {\n\t\tlevel:1,\n\t\tgrid : {"
-    let written = false     //  example -> 3 : {
-    for (var i = 0; i < grid.length; i++) {
-        if (grid[i]) {
-            for (var j = 0; j < 14; j++) {
-                if (grid[i] && grid[i][j]) {
-                    if (!written) {
-                        mapsJsContent += "\n\t\t\t" + i + ": {"
-                        written = true
+function copyToClipboard() {
+    saveMap(lastOpenedMap)
+    for (var l=1; l<=Object.keys(maps).length; l++) {
+        mapsJsContent += "\n\t" + l + ": {\n\t\tgrid : {"
+        let written = false     //  example -> 3 : {
+        for (var i = 0; i < grid.length; i++) {
+            if (grid[i]) {
+                for (var j = 0; j < 14; j++) {
+                    if (maps[l].grid[i] && maps[l].grid[i][j]) {
+                        if (!written) {
+                            mapsJsContent += "\n\t\t\t" + i + ": {"
+                            written = true
+                        }
+                        //grid[i][j] = maps[levelNum].grid[i][j]
+                        //mapsJsContent += "\n\t\t\t\t" + j + ": {imgX:" + grid[i][j].imgX + ", imgY:" + grid[i][j].imgY + ", hitbox:" + grid[i][j].hitbox + "},"
+                        mapsJsContent += "\n\t\t\t\t" + j + ": {imgX:" + maps[l].grid[i][j].imgX + ", imgY:" + maps[l].grid[i][j].imgY + ", hitbox:" + maps[l].grid[i][j].hitbox + "},"
                     }
-                    //grid[i][j] = maps[levelNum].grid[i][j]
-                    mapsJsContent += "\n\t\t\t\t" + j + ": {imgX:" + grid[i][j].imgX + ", imgY:" + grid[i][j].imgY + ", hitbox:" + grid[i][j].hitbox + "},"
                 }
+                if (written) {
+                    mapsJsContent += "\n\t\t\t},"
+                }
+                written = false
             }
-            if (written) {
-                mapsJsContent += "\n\t\t\t},"
-            }
-            written = false
         }
+        mapsJsContent += "\n\t\t},\n\t},"
     }
-    mapsJsContent += "\n\t\t},\n\t}\n}"
+    mapsJsContent += "\n}"
     toCopy.value = mapsJsContent
     copyText()
     savedGrid = true
-    mapsJsContent = ""
+    mapsJsContent = "maps = {"
 }
 
 function saveMap(mapNum) {
@@ -286,10 +290,21 @@ function saveMap(mapNum) {
     }
 }
 
+
+function prepareMapSelectOption() {
+    let lenOfMap = Object.keys(maps).length
+    for (var i=1; i<=lenOfMap; i++) {
+        let newOption = document.createElement("option")
+        newOption.innerText = i
+        mapSelectOption.appendChild(newOption)
+    }
+}
+
+
 function copyText() {
     toCopy.select()
     document.execCommand("copy")
-    saveMapsButton.innerText = "Copied"
+    copyToClipboardButton.innerText = "Copied"
 }
 
 function expandGrid(maxColumn) {
@@ -314,6 +329,7 @@ if(maps[1]) {
     loadMap(1)
     mapSelectOption.selectedIndex = 0
 }
+prepareMapSelectOption()
 // selectImage
 selectImage(0)
 // check icon

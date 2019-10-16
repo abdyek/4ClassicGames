@@ -15,7 +15,7 @@
         <div id="horizontalCellNum"></div>
     </div>
     <div id="tools">
-        <div id="saveMapsButton" onclick="saveMaps()">
+        <div id="copyToClipboard" onclick="copyToClipboard()">
             Copy to clipboard
         </div>
         <div id="hitboxSwitch" onclick="hitboxSwitcher()">
@@ -27,7 +27,7 @@
             <div id="leftMapButton" class="navButton" onclick="previousMap()"><</div>
             <div id="map">
                 <select name="" id="mapSelectOption" onchange="selectMap()">
-                    <option value="">1</option>
+                    <!-- <option value="">1</option> look prepareMapSelectOption function -->
                 </select>
             </div> <!-- now only 1 map-->
             <div id="nextMapButton" class="navButton" onclick="nextMap()">></div>  <!-- + or > -->

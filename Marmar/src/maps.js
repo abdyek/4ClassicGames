@@ -1,6 +1,5 @@
 maps = {
 	1: {
-		level:1,
 		grid : {
 			0: {
 				5: {imgX:10, imgY:0, hitbox:true},
@@ -103,6 +102,26 @@ maps = {
 			31: {
 				5: {imgX:10, imgY:0, hitbox:true},
 			},
-		}
+		},
+	},
+	2: {
+		grid : {
+		},
+	},
+	3: {
+		grid : {
+		},
+	},
+	4: {
+		grid : {
+			4: {
+				8: {imgX:7, imgY:4, hitbox:false},
+				9: {imgX:7, imgY:5, hitbox:false},
+				10: {imgX:7, imgY:5, hitbox:false},
+				11: {imgX:7, imgY:5, hitbox:false},
+				12: {imgX:7, imgY:6, hitbox:false},
+				13: {imgX:7, imgY:6, hitbox:false},
+			},
+		},
 	},
 }
