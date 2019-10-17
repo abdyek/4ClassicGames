@@ -4,6 +4,8 @@ function gameLoop() {
     context.clearRect(0,0, canvas.width, canvas.height)
 
     // drawing
+    characterAnimate()
+    keyDetect()
     draw()
 
     window.requestAnimationFrame(gameLoop)

@@ -334,3 +334,8 @@ prepareMapSelectOption()
 selectImage(0)
 // check icon
 checkNextMapIcon()
+
+// buraya deniyorum şimdilik animate işini
+function animate() {
+    context.clearRect(0,0, context.width,context.height)
+}
