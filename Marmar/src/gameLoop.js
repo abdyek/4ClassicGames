@@ -6,6 +6,9 @@ function gameLoop() {
     // drawing
     characterAnimate()
     keyDetect()
+    gravity()
+    getCharGridIndex()
+    hitboxControl()
     draw()
 
     window.requestAnimationFrame(gameLoop)
