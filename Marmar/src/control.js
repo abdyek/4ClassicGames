@@ -1,13 +1,13 @@
+let hitboxes = new Array(672);
+for(var i=0;i<hitboxes.length; i++) {
+    hitboxes[i] = new Array(1200);
+}
 prepareHitboxes()
+
 function hitboxesControl() {
     // floor
     if (hitboxes[char.points.bottomRight.y+1][char.points.bottomRight.x] || hitboxes[char.points.bottomLeft.y+1][char.points.bottomLeft.x]) {
         char.floor = true
-        /* bu kısmı rescueChar fonksiyonunda kullanıcam
-        if(hitboxes[char.points.bottomRight.y][char.points.bottomRight.x] || hitboxes[char.points.bottomLeft.y][char.points.bottomLeft.x]) {
-            char.coor.y--
-        }
-        */
     } else {
         char.floor = false
     }
@@ -50,4 +50,36 @@ function rescueChar() { // rescue char to go under
         char.coor.x++
     }
 
+}
+
+function gravity() {
+    if(!char.floor) {
+        char.coor.y += 6
+        char.permission.clickableJump = false
+    } else {
+        char.permission.clickableJump = true
+        //char.coor.y -= 5
+    }
+}
+
+function prepareHitboxes() {
+    let block = {
+        x:0,
+        y:0
+    }
+    for(var y=0; y<672; y++) {
+        for(var x=0; x<1200; x++) {
+            block.x = parseInt(x/48)
+            block.y = parseInt(y/48)
+            if(maps[1]['grid'][block.x] != undefined && maps[1]['grid'][block.x][block.y] != undefined) {
+                if(maps[1]['grid'][block.x][block.y]['hitbox']) {
+                    hitboxes[y][x] = true
+                } else {
+                    hitboxes[y][x] = false
+                }
+            } else {
+                hitboxes[y][x] = false
+            }
+        }
+    }
 }
