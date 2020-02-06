@@ -11,8 +11,10 @@ function gameLoop() {
     refreshPointsPosition()
     //hitboxControl()
     hitboxesControl()
+    rescueChar()
     goLeft()
     goRight()
+    jump()
     draw()
 
     window.requestAnimationFrame(gameLoop)

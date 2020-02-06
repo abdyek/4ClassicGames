@@ -10,16 +10,16 @@ let currentFrame = 0
 let counter = 0
 let char = {
     coor: {
-        x: 3,
-        y: 3
+        x: 0,
+        y: 0
     },
     hitbox: {
         start: {
-            x: 28,
+            x: 32,
             y: 36,
         },
         finish: {
-            x: 28,
+            x: 32,
             y:0
         }
     },
@@ -54,19 +54,32 @@ let char = {
             x:0,
             y:0
         },
+        /*
+        leftMiddle: {
+            x:0,
+            y:0
+        },
+        rightMiddle: {
+            x:0,
+            y:0
+        }
+        */
     },
     type:1,  // 0, 1, 2
     walkAnimate: false,
     floor: false,
+    speed: 4,
     wall: {
         left: false,
         right: false
     },
+    jump:false,
     permission: { 
         clickedLeftButton: false,
         clickedRightButton: false,
         goingLeft: false,
         goingRight: false,
+        clickableJump: true
     }
     
 
@@ -123,7 +136,15 @@ function keyDetect() {
         char.walkAnimate = false
     }
     if(keyList[87]) {
-        console.log("jump!")
+        if(char.permission.clickableJump) {
+            char.jump = true
+            char.speed = 6
+            char.permission.clickableJump = false
+            setTimeout(() => {
+                char.speed = 4
+                char.jump = false
+            }, 350);
+        }
     }
     if(keyList[74]) {
         char.type = 0
@@ -138,26 +159,29 @@ function keyDetect() {
 
 function gravity() {
     if(!char.floor) {
-        char.coor.y += 4
+        char.coor.y += 6
+        char.permission.clickableJump = false
     } else {
+        char.permission.clickableJump = true
         //char.coor.y -= 5
     }
 }
 
 function goLeft() {
     if(char.goingLeft && char.wall.left == false) {
-        // doğru çalışıyor sadece yere inince çakılma oluyor onu düzeltmem gerekiyor
-        if((grid[char.gridIndex.left.x] && grid[char.gridIndex.left.x][char.gridIndex.top.y] && grid[char.gridIndex.left.x][char.gridIndex.top.y].hitbox) || (grid[char.gridIndex.left.x] && grid[char.gridIndex.left.x][char.gridIndex.bottom.y] && grid[char.gridIndex.left.x][char.gridIndex.bottom.y].hitbox)) {
-            char.goingLeft = false
-        } else {
-            char.coor.x -= 4
-        }
+        char.coor.x -= char.speed
     }
 }
 
 function goRight() {
     if(char.goingRight && char.wall.right == false) {
-        char.coor.x += 4
+        char.coor.x += char.speed
+    }
+}
+
+function jump() {
+    if(char.jump) {
+        char.coor.y -= 12
     }
 }
 
@@ -214,6 +238,13 @@ function refreshPointsPosition() {
     char.points.bottomLeft.y = char.coor.y + 96 - char.hitbox.finish.y
     char.points.bottomRight.x = char.coor.x + 96 - char.hitbox.finish.x
     char.points.bottomRight.y = char.coor.y + 96 - char.hitbox.finish.y
+    /*
+    char.points.leftMiddle.x = char.coor.x + char.hitbox.start.x
+    char.points.leftMiddle.y = char.coor.y + char.hitbox.start.y + 48
+    char.points.rightMiddle.x = char.coor.x + 96 - char.hitbox.finish.x
+    char.points.rightMiddle.y = char.coor.y + 48 - char.hitbox.finish.y
+    maybe I need these
+    */
     // hepsi 96 olmayacak bunu sonradan düzelticem
 }
 
