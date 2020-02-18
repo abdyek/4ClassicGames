@@ -1,3 +1,4 @@
+I stopped to develop this project because I think javascript is not appropriate language to develop game.
 Four classic games to learn game development
 https://youtu.be/Utg5bY49rc8?t=1804
 
